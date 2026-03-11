@@ -1,0 +1,18 @@
+[
+  {
+    "id": "c1",
+    "name": "林然",
+    "age": 26,
+    "job": "designer",
+    "mbti": "ENFJ",
+    "tagline": "热爱生活的设计师"
+  },
+  {
+    "id": "c2",
+    "name": "周舟",
+    "age": 28,
+    "job": "engineer",
+    "mbti": "INTJ",
+    "tagline": "理性冷静的程序员"
+  }
+]
