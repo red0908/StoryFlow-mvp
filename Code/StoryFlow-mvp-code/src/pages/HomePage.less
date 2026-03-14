@@ -27,47 +27,56 @@
 @duration-card: 0.25s;
 @duration-modal: 0.28s;
 
-// 标题：中英文更近、字号更大、入场与微光动画
+// 标题：艺术字体、渐变、描边；上行大字「MBTI相亲局」，下行小字「MBTI Heartbeat Dating」
+@font-title: 'ZCOOL XiaoWei', 'Cormorant Garamond', 'Noto Serif SC', serif;
+
 .home-title {
-  font-family: @font-serif;
-  font-weight: 600;
-  font-size: clamp(2.5rem, 5vw, 4.25rem);
-  letter-spacing: 0.12em;
+  font-family: @font-title;
   margin: 0;
   display: inline-flex;
   flex-direction: column;
-  flex-wrap: wrap;
-  justify-content: center;
   align-items: center;
-  color: @color-title;
-  text-shadow: 0 2px 8px @color-black-25, 0 0 48px rgba(255, 240, 230, 0.25), 0 1px 0 rgba(255, 255, 255, 0.45);
+  gap: 0.25rem;
   animation: home-title-in 1s ease-out both;
 
-  &-en {
-    font-size: 0.7em;
-    letter-spacing: 0.4em;
+  &-main {
+    font-size: clamp(2.75rem, 5.5vw, 4.5rem);
     font-weight: 700;
-    color: inherit;
-    text-shadow: inherit;
-    opacity: 0.98;
+    letter-spacing: 0.18em;
+    line-height: 1.15;
+    background: linear-gradient(165deg, #fffef9 0%, #fce8ec 35%, #f5d8e0 70%, #f0e6e8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.65);
+    paint-order: stroke fill;
+    text-shadow: none;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) drop-shadow(0 0 24px rgba(255, 230, 240, 0.35));
   }
 
-  &-cn {
-    letter-spacing: 0.2em;
+  &-sub {
+    font-family: 'Cormorant Garamond', @font-title;
+    font-size: clamp(1rem, 1.8vw, 1.35rem);
     font-weight: 600;
-    color: inherit;
-    text-shadow: 0 2px 12px @color-black-3, 0 0 40px rgba(255, 235, 220, 0.3), 0 1px 0 rgba(255, 255, 255, 0.5);
-    animation: home-title-glow 3s ease-in-out 0.5s infinite alternate;
+    letter-spacing: 0.35em;
+    opacity: 0.92;
+    background: linear-gradient(120deg, rgba(255, 254, 250, 0.95) 0%, rgba(252, 232, 238, 0.9) 50%, rgba(245, 220, 228, 0.95) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-stroke: 0.75px rgba(255, 255, 255, 0.7);
+    paint-order: stroke fill;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
   }
 
   &-underline {
-    width: 160px;
-    height: 3px;
+    width: 140px;
+    height: 2px;
     margin-top: 1rem;
     flex-basis: 100%;
     margin-left: auto;
     margin-right: auto;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
     border-radius: 2px;
     animation: home-title-underline-in 0.8s ease-out 0.3s both;
   }
@@ -84,15 +93,6 @@
   }
 }
 
-@keyframes home-title-glow {
-  from {
-    text-shadow: 0 2px 12px @color-black-3, 0 0 40px rgba(255, 235, 220, 0.25), 0 1px 0 rgba(255, 255, 255, 0.5);
-  }
-  to {
-    text-shadow: 0 2px 16px @color-black-3, 0 0 56px rgba(255, 235, 220, 0.35), 0 1px 0 rgba(255, 255, 255, 0.55);
-  }
-}
-
 @keyframes home-title-underline-in {
   from {
     opacity: 0;
@@ -104,10 +104,15 @@
   }
 }
 
-// 底部按钮区：与放大卡片协调的间距与尺寸
+// 整体布局：标题+卡片+按钮成组居中，更集中
+.home-layout {
+  gap: 0;
+}
+
+// 底部按钮区：与卡片区收紧，整体更协调
 .home-footer {
-  padding: 2rem 1.5rem 2.5rem;
-  margin-top: 0.5rem;
+  padding: 1.25rem 1.5rem 1.75rem;
+  margin-top: 0.25rem;
 }
 
 // 爱心泡泡雨

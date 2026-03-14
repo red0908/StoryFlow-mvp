@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './HomePage.less';
 
 const CARDS = [
@@ -30,6 +31,7 @@ const INTRO_CONTENT = `欢迎来到「MBTI心动相亲局」！
 const INTRO_CLOSE_MS = 280;
 
 function HomePage() {
+  const navigate = useNavigate();
   const [introOpen, setIntroOpen] = useState(false);
   const [introClosing, setIntroClosing] = useState(false);
 
@@ -47,8 +49,7 @@ function HomePage() {
   }, []);
 
   const handleStartGame = () => {
-    // TODO: 进入游戏主流程
-    console.log('开始游戏');
+    navigate('/create/myRole');
   };
 
   return (
@@ -77,18 +78,19 @@ function HomePage() {
         ))}
       </div>
 
-      <div className="relative z-[1] flex flex-col flex-1">
-      {/* 头部标题：艺术高端风格 */}
-      <header className="flex-shrink-0 pt-14 pb-10 text-center">
+      <div className="relative z-[1] flex flex-col flex-1 justify-center items-center">
+      <div className="home-layout flex flex-col items-center w-full max-w-6xl">
+      {/* 头部标题：艺术字体 + 渐变 + 描边 */}
+      <header className="flex-shrink-0 pt-6 pb-5 text-center">
         <h1 className="home-title">
-          <p className="home-title-en">MBTI</p>
-          <p className="home-title-cn">心动相亲局</p>
+          <span className="home-title-main">MBTI心动相亲局</span>
+          <span className="home-title-sub">MBTI Heartbeat Dating</span>
         </h1>
         <div className="home-title-underline" />
       </header>
 
       {/* 中部：四张任务卡片 */}
-      <main className="flex-1 flex items-center justify-center px-8 pb-8">
+      <main className="flex-shrink-0 flex items-center justify-center px-6 py-4">
         <div className="grid grid-cols-4 gap-8 max-w-5xl">
           {CARDS.map((card) => (
             <div
@@ -148,6 +150,7 @@ function HomePage() {
           开始游戏
         </button>
       </footer>
+      </div>
       </div>
 
       {/* 玩法介绍弹窗 */}

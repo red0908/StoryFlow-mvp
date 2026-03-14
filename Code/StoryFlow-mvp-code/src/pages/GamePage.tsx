@@ -1,0 +1,285 @@
+import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import type { StoryNode, StoryOption, AffectionCondition, AffectionEffect, Candidate, MBTI } from '../types';
+import { useGameStore } from '../stores/useGameStore';
+import { usePlayerStore } from '../stores/usePlayerStore';
+import './GamePage.less';
+
+const CHAPTER_TITLES: Record<number, string> = {
+  1: '第一章·开头',
+  2: '第二章·发展',
+  3: '第三章·高潮',
+  4: '第四章·结局',
+};
+
+const MBTI_AVATARS_MALE: Record<MBTI, string> = {
+  ENFJ: '/person_img/avatar_male_enfj.png',
+  INTJ: '/person_img/avatar_male_intj.png',
+  INFJ: '/person_img/avatar_male_infj.png',
+  ENTJ: '/person_img/avatar_male_entj.png',
+};
+
+const MBTI_AVATARS_FEMALE: Record<MBTI, string> = {
+  ENFJ: '/person_img/avatar_female_enfj.png',
+  INTJ: '/person_img/avatar_female_intj.png',
+  INFJ: '/person_img/avatar_female_infj.png',
+  ENTJ: '/person_img/avatar_female_entj.png',
+};
+
+const MBTI_COLORS: Record<MBTI, string> = {
+  ENFJ: '#FF9F7C',
+  INTJ: '#7C6A9F',
+  INFJ: '#6B8E7C',
+  ENTJ: '#B84A62',
+};
+
+function getOpponentAvatar(playerGender: 'male' | 'female', mbti: MBTI): string {
+  const avatars = playerGender === 'male' ? MBTI_AVATARS_FEMALE : MBTI_AVATARS_MALE;
+  return avatars[mbti];
+}
+
+/** 我的角色头像（按性别 + MBTI） */
+function getPlayerAvatar(gender: 'male' | 'female', mbti: MBTI): string {
+  const avatars = gender === 'male' ? MBTI_AVATARS_MALE : MBTI_AVATARS_FEMALE;
+  return avatars[mbti];
+}
+
+/** 文本插值：将 {opponent.name}、{opponent.mbti} 等替换为实际值 */
+function interpolateText(
+  text: string,
+  ctx: { opponent: Candidate | null; player?: { description?: string } | null }
+): string {
+  if (!ctx.opponent) return text;
+  return text
+    .replace(/\{opponent\.name\}/g, ctx.opponent.name)
+    .replace(/\{opponent\.mbti\}/g, ctx.opponent.mbti)
+    .replace(/\{player\.description\}/g, ctx.player?.description ?? '');
+}
+
+/** 判断选项条件是否通过 */
+function evaluateCondition(condition: AffectionCondition | undefined, affection: number): boolean {
+  if (!condition || condition.type !== 'affection') return true;
+  const { operator, value } = condition;
+  switch (operator) {
+    case '<=':
+      return affection <= value;
+    case '>=':
+      return affection >= value;
+    case '<':
+      return affection < value;
+    case '>':
+      return affection > value;
+    case '===':
+      return affection === value;
+    default:
+      return true;
+  }
+}
+
+/** 过滤出满足条件的选项 */
+function filterOptions(options: StoryOption[], affection: number): StoryOption[] {
+  return options.filter((opt) => evaluateCondition(opt.condition, affection));
+}
+
+/** 执行选项效果（好感度） */
+function applyEffects(
+  effects: AffectionEffect[],
+  opponentMbti: MBTI,
+  addAffection: (delta: number) => void
+): void {
+  effects.forEach((eff) => {
+    if (eff.type !== 'affection' || eff.operator !== 'add') return;
+    if (eff.value != null) {
+      addAffection(eff.value);
+    } else if (eff.valueByMbti && opponentMbti in eff.valueByMbti) {
+      const delta = eff.valueByMbti[opponentMbti] ?? 0;
+      addAffection(delta);
+    }
+  });
+}
+
+function GamePage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const player = usePlayerStore((s) => s.player);
+  const {
+    opponent,
+    currentChapter,
+    currentNodeId,
+    affection,
+    setCurrentNode,
+    addAffection,
+  } = useGameStore();
+
+  const [nodes, setNodes] = useState<StoryNode[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [placeholderMessage, setPlaceholderMessage] = useState<string | null>(null);
+
+  const chapterFromUrl = Math.min(4, Math.max(1, Number(searchParams.get('chapter')) || 1));
+
+  // 加载剧本
+  useEffect(() => {
+    fetch('/data/story.json')
+      .then((res) => res.json())
+      .then((data: StoryNode[]) => setNodes(Array.isArray(data) ? data : []))
+      .catch(() => setNodes([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  // 无对手时重定向；同步 URL 章节；空节点时设为本章第一个节点
+  useEffect(() => {
+    if (!opponent) {
+      navigate('/blindDate', { replace: true });
+      return;
+    }
+    if (loading) return;
+
+    setSearchParams({ chapter: String(chapterFromUrl) }, { replace: true });
+
+    if (!currentNodeId && nodes.length > 0) {
+      const firstInChapter = nodes.find((n) => n.chapter === chapterFromUrl);
+      if (firstInChapter) {
+        setCurrentNode(firstInChapter.id, firstInChapter.chapter);
+      }
+    }
+  }, [opponent, loading, nodes, chapterFromUrl, currentNodeId, setCurrentNode, navigate, setSearchParams]);
+
+  const currentNode = nodes.find((n) => n.id === currentNodeId);
+  const visibleOptions = currentNode
+    ? filterOptions(currentNode.options, affection)
+    : [];
+
+  const handleOptionClick = useCallback(
+    (opt: StoryOption) => {
+      if (!opponent || !currentNode) return;
+      setPlaceholderMessage(null);
+
+      applyEffects(opt.effects, opponent.mbti, addAffection);
+
+      const next = nodes.find((n) => n.id === opt.nextNode);
+      if (next) {
+        setCurrentNode(next.id, next.chapter);
+        setSearchParams({ chapter: String(next.chapter) }, { replace: true });
+      } else {
+        // 单节点闭环：无下一节点时直接进入结局页
+        navigate('/ending', { replace: true });
+      }
+    },
+    [opponent, currentNode, nodes, addAffection, setCurrentNode, setSearchParams, navigate]
+  );
+
+  if (!opponent) return null;
+  if (loading) {
+    return (
+      <div className="game-page game-page-loading">
+        <div className="game-page-loading-text">加载剧情中…</div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="game-page min-h-screen min-w-[1280px] flex flex-col bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: 'url(/background/bg-01.png)' }}
+    >
+      <div className="game-page-content flex flex-col flex-1">
+        {/* 顶部状态栏 */}
+        <header className="game-page-header">
+          <div className="game-page-chapter">
+            {CHAPTER_TITLES[currentChapter] ?? `第${currentChapter}章`}
+          </div>
+          <div className="game-page-status">
+            {player && (
+              <>
+                <div className="game-page-player-wrap">
+                  <img
+                    src={getPlayerAvatar(player.gender, player.mbti)}
+                    alt="我的角色"
+                    className="game-page-player-avatar"
+                  />
+                  <span className="game-page-player-label">我</span>
+                  <span
+                    className="game-page-mbti game-page-mbti-player"
+                    style={{ backgroundColor: MBTI_COLORS[player.mbti] }}
+                  >
+                    {player.mbti}
+                  </span>
+                </div>
+                <span className="game-page-heart" aria-hidden>♥</span>
+              </>
+            )}
+            <div className="game-page-opponent-wrap">
+              <img
+                src={player ? getOpponentAvatar(player.gender, opponent.mbti) : ''}
+                alt={opponent.name}
+                className="game-page-opponent-avatar"
+              />
+              <span className="game-page-opponent-name">{opponent.name}</span>
+              <span
+                className="game-page-mbti game-page-mbti-opponent"
+                style={{ backgroundColor: MBTI_COLORS[opponent.mbti] }}
+              >
+                {opponent.mbti}
+              </span>
+            </div>
+            <div className="game-page-affection">
+              <span className="game-page-affection-label">好感度</span>
+              <div className="game-page-affection-bar-wrap">
+                <div
+                  className="game-page-affection-bar"
+                  style={{ width: `${affection}%` }}
+                />
+              </div>
+              <span className="game-page-affection-value">{affection}</span>
+            </div>
+          </div>
+        </header>
+
+        {/* 中部剧情框 + 选项区（紧贴剧情框下方） */}
+        <main className="game-page-main">
+          <div className="game-page-story-card">
+            <div className="game-page-story-body">
+              <p className="game-page-story-text">
+                {currentNode
+                  ? interpolateText(currentNode.text, { opponent, player })
+                  : '暂无剧情'}
+              </p>
+            </div>
+            {player && (
+              <div className="game-page-story-figure">
+                <img
+                  src={getOpponentAvatar(player.gender, opponent.mbti)}
+                  alt={opponent.name}
+                  className="game-page-story-avatar"
+                />
+              </div>
+            )}
+          </div>
+          <section className="game-page-options-wrap">
+            {visibleOptions.length > 0 ? (
+              <div className="game-page-options">
+                {visibleOptions.map((opt, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className="game-page-option-btn"
+                    onClick={() => handleOptionClick(opt)}
+                  >
+                    {opt.text}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p className="game-page-no-options">暂无可选选项</p>
+            )}
+            {placeholderMessage && (
+              <p className="game-page-placeholder-msg">{placeholderMessage}</p>
+            )}
+          </section>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+export default GamePage;
