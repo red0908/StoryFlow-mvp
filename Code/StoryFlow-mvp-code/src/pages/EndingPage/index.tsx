@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import type { Candidate, MBTI } from '../types';
-import { useGameStore } from '../stores/useGameStore';
-import { usePlayerStore } from '../stores/usePlayerStore';
+import type { Candidate, MBTI } from '../../types';
+import { useGameStore } from '../../stores/useGameStore';
+import { usePlayerStore } from '../../stores/usePlayerStore';
 import './EndingPage.less';
 
 const MBTI_AVATARS_MALE: Record<MBTI, string> = {

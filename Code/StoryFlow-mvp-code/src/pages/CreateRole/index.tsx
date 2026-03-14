@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Player, MBTI } from '../types';
-import { usePlayerStore } from '../stores/usePlayerStore';
+import type { Player, MBTI } from '../../types';
+import { usePlayerStore } from '../../stores/usePlayerStore';
 import './CreateRole.less';
 
 const PLAYER_STORAGE_KEY = 'storyflow_player';

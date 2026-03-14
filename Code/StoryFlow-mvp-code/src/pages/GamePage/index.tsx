@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import type { StoryNode, StoryOption, AffectionCondition, AffectionEffect, Candidate, MBTI } from '../types';
-import { useGameStore } from '../stores/useGameStore';
-import { usePlayerStore } from '../stores/usePlayerStore';
+import type { StoryNode, StoryOption, AffectionCondition, AffectionEffect, Candidate, MBTI } from '../../types';
+import { useGameStore } from '../../stores/useGameStore';
+import { usePlayerStore } from '../../stores/usePlayerStore';
 import './GamePage.less';
 
 const CHAPTER_TITLES: Record<number, string> = {

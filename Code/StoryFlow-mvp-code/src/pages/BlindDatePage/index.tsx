@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Candidate, MBTI } from '../types';
-import { usePlayerStore } from '../stores/usePlayerStore';
-import { useGameStore } from '../stores/useGameStore';
+import type { Candidate, MBTI } from '../../types';
+import { usePlayerStore } from '../../stores/usePlayerStore';
+import { useGameStore } from '../../stores/useGameStore';
 import {
   generateCandidates,
   getJobLabel,
   type GameConfigFull,
-} from '../utils/generateCandidates';
+} from '../../utils/generateCandidates';
 import './BlindDate.less';
 
 const MBTI_AVATARS_MALE: Record<MBTI, string> = {
