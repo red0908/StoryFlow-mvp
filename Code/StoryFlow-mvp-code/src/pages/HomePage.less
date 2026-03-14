@@ -1,0 +1,362 @@
+// 首页样式 - Less 变量与混入
+@font-serif: 'Noto Serif SC', serif;
+@color-title: #fffef8;
+@color-white-98: rgba(255, 255, 255, 0.98);
+@color-white-95: rgba(255, 255, 255, 0.95);
+@color-white-9: rgba(255, 255, 255, 0.9);
+@color-white-6: rgba(255, 255, 255, 0.6);
+@color-white-5: rgba(255, 255, 255, 0.5);
+@color-white-45: rgba(255, 255, 255, 0.45);
+@color-white-35: rgba(255, 255, 255, 0.35);
+@color-white-25: rgba(255, 255, 255, 0.25);
+@color-white-2: rgba(255, 255, 255, 0.2);
+@color-white-15: rgba(255, 255, 255, 0.15);
+@color-white-08: rgba(255, 255, 255, 0.08);
+@color-white-06: rgba(255, 255, 255, 0.06);
+@color-white-16: rgba(255, 255, 255, 0.16);
+@color-black-2: rgba(0, 0, 0, 0.2);
+@color-black-15: rgba(0, 0, 0, 0.15);
+@color-black-25: rgba(0, 0, 0, 0.25);
+@color-black-3: rgba(0, 0, 0, 0.3);
+@color-black-35: rgba(0, 0, 0, 0.35);
+@color-primary: rgba(184, 74, 98, 0.92);
+@color-primary-dark: rgba(160, 55, 80, 0.95);
+@color-primary-hover: rgba(200, 85, 110, 0.95);
+@color-primary-hover-dark: rgba(175, 65, 92, 0.98);
+@duration-btn: 0.22s;
+@duration-card: 0.25s;
+@duration-modal: 0.28s;
+
+// 标题：中英文更近、字号更大、入场与微光动画
+.home-title {
+  font-family: @font-serif;
+  font-weight: 600;
+  font-size: clamp(2.5rem, 5vw, 4.25rem);
+  letter-spacing: 0.12em;
+  margin: 0;
+  display: inline-flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  color: @color-title;
+  text-shadow: 0 2px 8px @color-black-25, 0 0 48px rgba(255, 240, 230, 0.25), 0 1px 0 rgba(255, 255, 255, 0.45);
+  animation: home-title-in 1s ease-out both;
+
+  &-en {
+    font-size: 0.7em;
+    letter-spacing: 0.4em;
+    font-weight: 700;
+    color: inherit;
+    text-shadow: inherit;
+    opacity: 0.98;
+  }
+
+  &-cn {
+    letter-spacing: 0.2em;
+    font-weight: 600;
+    color: inherit;
+    text-shadow: 0 2px 12px @color-black-3, 0 0 40px rgba(255, 235, 220, 0.3), 0 1px 0 rgba(255, 255, 255, 0.5);
+    animation: home-title-glow 3s ease-in-out 0.5s infinite alternate;
+  }
+
+  &-underline {
+    width: 160px;
+    height: 3px;
+    margin-top: 1rem;
+    flex-basis: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+    border-radius: 2px;
+    animation: home-title-underline-in 0.8s ease-out 0.3s both;
+  }
+}
+
+@keyframes home-title-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes home-title-glow {
+  from {
+    text-shadow: 0 2px 12px @color-black-3, 0 0 40px rgba(255, 235, 220, 0.25), 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+  to {
+    text-shadow: 0 2px 16px @color-black-3, 0 0 56px rgba(255, 235, 220, 0.35), 0 1px 0 rgba(255, 255, 255, 0.55);
+  }
+}
+
+@keyframes home-title-underline-in {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+// 底部按钮区：与放大卡片协调的间距与尺寸
+.home-footer {
+  padding: 2rem 1.5rem 2.5rem;
+  margin-top: 0.5rem;
+}
+
+// 爱心泡泡雨
+.home-bubbles {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.home-bubble {
+  position: absolute;
+  bottom: -2em;
+  color: rgba(255, 200, 210, 0.6);
+  text-shadow: 0 0 8px rgba(255, 180, 200, 0.3);
+  animation: home-bubble-rise linear infinite;
+  will-change: transform;
+}
+
+@keyframes home-bubble-rise {
+  from {
+    transform: translateY(0) translateX(0) scale(0.9);
+  }
+  25% {
+    transform: translateY(-25vh) translateX(8px) scale(1);
+  }
+  50% {
+    transform: translateY(-50vh) translateX(-5px) scale(0.95);
+  }
+  75% {
+    transform: translateY(-75vh) translateX(6px) scale(1);
+  }
+  to {
+    transform: translateY(-100vh) translateX(0) scale(0.9);
+  }
+}
+
+// 卡片
+.home-card {
+  transition: transform @duration-card ease, box-shadow @duration-card ease;
+
+  &:hover {
+    transform: scale(1.05) translateY(-4px);
+    box-shadow: 0 16px 40px @color-black-35;
+  }
+}
+
+// 按钮基础与变体（与放大后的卡片比例协调）
+.home-btn {
+  font-family: @font-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  padding: 1rem 2.75rem;
+  border-radius: 9999px;
+  border: 1px solid @color-white-45;
+  transition: transform @duration-btn ease, box-shadow @duration-btn ease, border-color @duration-btn ease,
+    background @duration-btn ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-3px);
+  }
+
+  &-secondary {
+    color: @color-white-98;
+    background: @color-white-08!important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px @color-black-15, inset 0 1px 0 @color-white-15;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: @color-white-6;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2), inset 0 1px 0 @color-white-2;
+    }
+  }
+
+  &-primary {
+    color: #fff;
+    background-color: rgb(184, 74, 98)!important;
+    background-image: linear-gradient(145deg, @color-primary 0%, @color-primary-dark 100%);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 6px 24px rgba(184, 74, 98, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+
+    &:hover {
+      background-color: rgb(200, 85, 110);
+      background-image: linear-gradient(145deg, @color-primary-hover 0%, @color-primary-hover-dark 100%);
+      border-color: @color-white-5;
+      box-shadow: 0 10px 32px rgba(184, 74, 98, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+// 玩法介绍弹窗
+.home-intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: home-intro-overlay-in @duration-modal ease-out forwards;
+
+  &-closing {
+    animation: home-intro-overlay-out @duration-modal ease-in forwards;
+  }
+}
+
+@keyframes home-intro-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes home-intro-overlay-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.home-intro-modal {
+  font-family: @font-serif;
+  width: 100%;
+  max-width: 480px;
+  max-height: calc(100vh - 4rem);
+  border-radius: 1.25rem;
+  border: 1px solid @color-white-45;
+  color: @color-white-98;
+  background: @color-white-08;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px @color-black-15, inset 0 1px 0 @color-white-15, 0 24px 48px @color-black-25;
+  display: flex;
+  flex-direction: column;
+  animation: home-intro-modal-in @duration-modal ease-out forwards;
+
+  &-closing {
+    animation: home-intro-modal-out @duration-modal ease-in forwards;
+  }
+
+  &-header {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem 0.75rem;
+    border-bottom: 1px solid @color-white-15;
+  }
+}
+
+// 弹窗内子元素类名为 home-intro-* 而非 home-intro-modal-*
+.home-intro-title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-shadow: 0 1px 2px @color-black-2;
+}
+
+.home-intro-close {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: @color-white-9;
+  background: @color-white-08;
+  border: 1px solid @color-white-35;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background: @color-white-16;
+    border-color: @color-white-5;
+    transform: scale(1.06);
+  }
+}
+
+.home-intro-body {
+  flex: 1;
+  min-height: 0;
+  padding: 1rem 1.5rem 1.5rem;
+}
+
+.home-intro-content {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  letter-spacing: 0.05em;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: @color-white-06;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: @color-white-25;
+    border-radius: 3px;
+  }
+
+  p {
+    margin: 0 0 0.6em;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+@keyframes home-intro-modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes home-intro-modal-out {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+}
