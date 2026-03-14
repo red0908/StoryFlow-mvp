@@ -1,0 +1,19 @@
+{
+  "names": {
+    "male": ["陈浩", "李想", "王磊", "张俊", "刘洋"],
+    "female": ["林然", "周舟", "吴雨", "郑悦", "孙琳"]
+  },
+  "jobs": [
+    { "id": "doctor", "label": "医生" },
+    { "id": "teacher", "label": "教师" },
+    { "id": "engineer", "label": "工程师" },
+    { "id": "designer", "label": "设计师" },
+    { "id": "lawyer", "label": "律师" }
+  ],
+  "mbti": [
+    { "id": "ENFJ", "label": "ENFJ", "tagline": "热情的教育者" },
+    { "id": "INTJ", "label": "INTJ", "tagline": "理性的战略家" },
+    { "id": "INFJ", "label": "INFJ", "tagline": "安静的洞察者" },
+    { "id": "ENTJ", "label": "ENTJ", "tagline": "果断的领导者" }
+  ]
+}
