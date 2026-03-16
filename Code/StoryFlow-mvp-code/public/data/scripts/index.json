@@ -1,0 +1,23 @@
+[
+  {
+    "id": "modern_love",
+    "title": "都市迷情 · 咖啡店初遇",
+    "description": "在熟悉的城市里，从一场咖啡店的相亲开始，体验不同性格间的靠近与试探。",
+    "recommendedMbti": ["ENFJ", "INTJ", "INFJ", "ENTJ"],
+    "cover": "/background/script_modern_love.png"
+  },
+  {
+    "id": "modern_love_2",
+    "title": "都市迷情 · 再一次心动",
+    "description": "同样是现代都市，不同的缘分设定与相处节奏，让你用另一种视角重新体验心动。",
+    "recommendedMbti": ["ENFJ", "INTJ", "INFJ", "ENTJ"],
+    "cover": "/background/script_modern_love_2.png"
+  },
+  {
+    "id": "coming_soon",
+    "title": "新剧本开发中",
+    "description": "更多风格的故事正在制作中，敬请期待后续更新。",
+    "recommendedMbti": ["ENFJ", "INTJ", "INFJ", "ENTJ"],
+    "cover": "/background/script_coming_soon.png"
+  }
+]

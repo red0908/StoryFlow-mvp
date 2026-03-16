@@ -1,5 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { audioManager } from '../../audio';
 import './HomePage.less';
 
 const CARDS = [
@@ -49,8 +50,21 @@ function HomePage() {
   }, []);
 
   const handleStartGame = () => {
-    navigate('/create/myRole');
+    navigate('/scripts');
   };
+
+  const handleProfile = () => {
+    navigate('/profile');
+  };
+
+  // 主菜单 BGM：进入首页预加载并播放，离开时停止
+  useEffect(() => {
+    audioManager.preload();
+    audioManager.playBGM('main_menu', true);
+    return () => {
+      audioManager.stopAll();
+    };
+  }, []);
 
   return (
     <div
@@ -137,14 +151,30 @@ function HomePage() {
       <footer className="home-footer flex-shrink-0 flex items-center justify-center gap-10">
         <button
           type="button"
-          onClick={handlePlayIntro}
+          onClick={() => {
+            audioManager.playSFX('ui_click');
+            handleProfile();
+          }}
+          className="home-btn home-btn-secondary"
+        >
+          玩家档案
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            audioManager.playSFX('ui_click');
+            handlePlayIntro();
+          }}
           className="home-btn home-btn-secondary"
         >
           玩法介绍
         </button>
         <button
           type="button"
-          onClick={handleStartGame}
+          onClick={() => {
+            audioManager.playSFX('ui_click');
+            handleStartGame();
+          }}
           className="home-btn home-btn-primary"
         >
           开始游戏

@@ -1,8 +1,11 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import type { Candidate, MBTI } from '../../types';
+import type { Candidate, MBTI, EndingType as GlobalEndingType } from '../../types';
 import { useGameStore } from '../../stores/useGameStore';
 import { usePlayerStore } from '../../stores/usePlayerStore';
+import { useProfileStore } from '../../stores/useProfileStore';
+import { useScriptStore } from '../../stores/useScriptStore';
+import { audioManager } from '../../audio';
 import './EndingPage.less';
 
 const MBTI_AVATARS_MALE: Record<MBTI, string> = {
@@ -24,7 +27,7 @@ function getOpponentAvatar(playerGender: 'male' | 'female', mbti: MBTI): string 
   return avatars[mbti];
 }
 
-type EndingType = 'success' | 'regret' | 'fail';
+type EndingType = GlobalEndingType;
 
 interface EndingConfig {
   id: EndingType;
@@ -42,12 +45,19 @@ const ENDINGS: Record<EndingType, EndingConfig> = {
     comment: '你们性格相契，彼此理解，和 {opponent.name} 的这次相亲圆满成功。',
     filterClass: 'ending-page-bg-success',
   },
-  regret: {
-    id: 'regret',
-    title: '略有遗憾',
-    subtitle: '有好感但未更进一步',
-    comment: '你们相处愉快，但和 {opponent.name} 似乎还差一点缘分。',
-    filterClass: 'ending-page-bg-regret',
+  surface: {
+    id: 'surface',
+    title: '表面和谐',
+    subtitle: '对方满意，你却有点累',
+    comment: '你努力照顾对方感受，但和 {opponent.name} 的关系里，你似乎牺牲了不少自己。',
+    filterClass: 'ending-page-bg-surface',
+  },
+  friend: {
+    id: 'friend',
+    title: '知己难求',
+    subtitle: '三观合拍，却差一点心动',
+    comment: '你和 {opponent.name} 很聊得来，像是难得的知己，只是缘分停在了朋友的位置。',
+    filterClass: 'ending-page-bg-friend',
   },
   fail: {
     id: 'fail',
@@ -58,12 +68,19 @@ const ENDINGS: Record<EndingType, EndingConfig> = {
   },
 };
 
-function getEndingType(affection: number, urlType?: string | null): EndingType {
-  if (urlType === 'success' || urlType === 'regret' || urlType === 'fail') {
+function getEndingType(affection: number, alignment: number, urlType?: string | null): EndingType {
+  if (urlType === 'success' || urlType === 'surface' || urlType === 'friend' || urlType === 'fail') {
     return urlType;
   }
-  if (affection >= 80) return 'success';
-  if (affection >= 50) return 'regret';
+  // 结局判定规则（需求文档 2.6）
+  if (affection >= 80 && alignment >= 70) return 'success';
+  if (affection >= 80 && alignment < 50) return 'surface';
+  if (affection < 60 && alignment >= 70) return 'friend';
+  if (affection < 50 && alignment < 50) return 'fail';
+  // 其余组合按权重就近归类
+  if (affection >= 70 && alignment >= 60) return 'success';
+  if (affection >= 60 && alignment < 60) return 'surface';
+  if (alignment >= 60) return 'friend';
   return 'fail';
 }
 
@@ -85,12 +102,18 @@ function EndingPage() {
 
   const opponent = useGameStore((s) => s.opponent);
   const affection = useGameStore((s) => s.affection);
+  const alignment = useGameStore((s) => s.alignment);
   const resetGame = useGameStore((s) => s.resetGame);
   const player = usePlayerStore((s) => s.player);
+  const currentScriptId = useScriptStore((s) => s.currentScriptId);
+  const appendEnding = useProfileStore((s) => s.appendEnding);
+  const bumpEncounter = useProfileStore((s) => s.bumpEncounter);
+
+  const wroteHistoryRef = useRef(false);
 
   const endingType = useMemo(
-    () => getEndingType(affection, urlType),
-    [affection, urlType]
+    () => getEndingType(affection, alignment, urlType),
+    [affection, alignment, urlType]
   );
   const config = ENDINGS[endingType];
   const comment = useMemo(
@@ -104,9 +127,46 @@ function EndingPage() {
     }
   }, [opponent, navigate]);
 
+  // 结局页 BGM：完美/表面和谐 → 温暖；知己/分道 → 遗憾
+  useEffect(() => {
+    audioManager.stopAll();
+    if (endingType === 'success' || endingType === 'surface') {
+      audioManager.playBGM('ending_perfect', true);
+    } else {
+      audioManager.playBGM('ending_regret', true);
+    }
+  }, [endingType]);
+
+  // 写入玩家档案：历史记录 + 图鉴统计（MVP 最小可用）
+  useEffect(() => {
+    if (!opponent || !player) return;
+    if (wroteHistoryRef.current) return;
+    wroteHistoryRef.current = true;
+
+    const now = new Date();
+    const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+    appendEnding({
+      date,
+      scriptId: currentScriptId ?? 'unknown',
+      opponentMbti: opponent.mbti,
+      endingType,
+      affection,
+      alignment,
+      aiComment: '（AI 评价占位：后续接入/增强）',
+    });
+
+    bumpEncounter(opponent.mbti, {
+      soulmate: endingType === 'success',
+      endingId: endingType,
+      affection,
+      alignment,
+    });
+  }, [appendEnding, bumpEncounter, opponent, player, currentScriptId, endingType, affection, alignment]);
+
   const handleRestart = () => {
     resetGame();
-    navigate('/', { replace: true });
+    navigate('/scripts', { replace: true });
   };
 
   if (!opponent) return null;
@@ -146,7 +206,10 @@ function EndingPage() {
             <button
               type="button"
               className="ending-page-btn ending-page-btn-primary"
-              onClick={handleRestart}
+              onClick={() => {
+                audioManager.playSFX('ui_click');
+                handleRestart();
+              }}
             >
               重新开始
             </button>

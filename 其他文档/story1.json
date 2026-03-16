@@ -1,0 +1,24 @@
+[
+  {
+    "id": "c1_node1",
+    "chapter": 1,
+    "text": "你坐在咖啡厅，等待 {opponent.name} 的到来。她/他穿着一件简单的衬衫，微笑着向你打招呼。",
+    "options": [
+      {
+        "text": "直接开门见山，聊聊工作。",
+        "nextNode": "c1_node2",
+        "effects": [
+          { "type": "affection", "operator": "add", "value": 2 }
+        ]
+      },
+      {
+        "text": "先夸赞对方的穿着，拉近距离。",
+        "nextNode": "c1_node3",
+        "effects": [
+          { "type": "affection", "operator": "add", "valueByMbti": { "INTJ": 1, "ENFJ": 3, "INFJ": 2, "ENTJ": 1 } }
+        ],
+        "condition": { "type": "affection", "operator": "<=", "value": 60 }
+      }
+    ]
+  }
+]

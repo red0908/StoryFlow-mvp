@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Player, MBTI } from '../../types';
 import { usePlayerStore } from '../../stores/usePlayerStore';
+import { useScriptStore } from '../../stores/useScriptStore';
+import { useProfileStore } from '../../stores/useProfileStore';
 import './CreateRole.less';
 
 const PLAYER_STORAGE_KEY = 'storyflow_player';
@@ -52,6 +54,8 @@ const MBTI_COLORS: Record<MBTI, string> = {
 function CreateRole() {
   const navigate = useNavigate();
   const setPlayer = usePlayerStore((s) => s.setPlayer);
+  const currentScript = useScriptStore((s) => s.currentScript);
+  const displayName = useProfileStore((s) => s.profile.displayName);
 
   const [config, setConfig] = useState<GameConfig | null>(null);
   const [gender, setGender] = useState<Player['gender'] | null>(null);
@@ -67,6 +71,13 @@ function CreateRole() {
       .then((data: GameConfig) => setConfig(data))
       .catch(() => setConfig({ jobs: [], mbti: [] }));
   }, []);
+
+  // 没有设置昵称时，先引导去玩家档案页
+  useEffect(() => {
+    if (!displayName.trim()) {
+      navigate('/profile', { replace: true });
+    }
+  }, [displayName, navigate]);
 
   const jobIds = config?.jobs.map((j) => j.id) ?? [];
   const mbtiIds = config?.mbti.map((m) => m.id) ?? [];
@@ -96,8 +107,13 @@ function CreateRole() {
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
+      if (!displayName.trim()) {
+        navigate('/profile', { replace: true });
+        return;
+      }
       if (!validate() || gender === null || mbti === null) return;
       const player: Player = {
+        name: displayName.trim(),
         gender,
         age,
         job,
@@ -110,7 +126,7 @@ function CreateRole() {
       } catch (_) {}
       navigate('/blindDate');
     },
-    [validate, gender, age, job, mbti, description, setPlayer, navigate]
+    [displayName, validate, gender, age, job, mbti, description, setPlayer, navigate]
   );
 
   const handleRandom = useCallback(() => {
@@ -138,7 +154,14 @@ function CreateRole() {
       <div className="create-role-content flex flex-col flex-1 items-center justify-center py-10 px-6">
         <header className="create-role-header text-center mb-6">
           <h1 className="create-role-title">创建我的角色</h1>
-          <p className="create-role-subtitle">认识一下自己，开始心动之旅</p>
+          <p className="create-role-subtitle">
+            {currentScript
+              ? `当前剧本：${currentScript.title}，先认识一下自己，再踏入故事。`
+              : '认识一下自己，开始心动之旅'}
+          </p>
+          {displayName.trim() && (
+            <p className="create-role-subtitle">本局将以「{displayName.trim()}」的昵称进入剧情</p>
+          )}
         </header>
 
         <form onSubmit={handleSubmit} className="create-role-form">

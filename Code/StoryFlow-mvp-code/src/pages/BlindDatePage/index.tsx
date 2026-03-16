@@ -105,6 +105,7 @@ function BlindDatePage() {
 
         {player && (
           <div className="blind-date-my-info">
+            <span className="blind-date-my-name">{player.name}</span>
             <span className="blind-date-my-mbti" style={{ backgroundColor: MBTI_COLORS[player.mbti] }}>
               {player.mbti}
             </span>

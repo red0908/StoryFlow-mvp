@@ -1,0 +1,9 @@
+{
+  "id": "modern_love",
+  "title": "都市迷情",
+  "description": "在快节奏的都市中，你能否在一次次相处里，找到那个灵魂契合的人？",
+  "recommendedMbti": ["ENFJ", "INTJ", "INFJ", "ENTJ"],
+  "characters": ["ENFJ", "INTJ", "INFJ", "ENTJ"],
+  "nodes": [
+  ]
+}

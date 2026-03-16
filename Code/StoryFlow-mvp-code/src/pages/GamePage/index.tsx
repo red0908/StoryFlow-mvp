@@ -1,8 +1,18 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import type { StoryNode, StoryOption, AffectionCondition, AffectionEffect, Candidate, MBTI } from '../../types';
+import type {
+  Script,
+  StoryNode,
+  StoryOption,
+  Condition,
+  Effect,
+  Candidate,
+  MBTI,
+} from '../../types';
 import { useGameStore } from '../../stores/useGameStore';
 import { usePlayerStore } from '../../stores/usePlayerStore';
+import { useScriptStore } from '../../stores/useScriptStore';
+import { audioManager } from '../../audio';
 import './GamePage.less';
 
 const CHAPTER_TITLES: Record<number, string> = {
@@ -44,56 +54,183 @@ function getPlayerAvatar(gender: 'male' | 'female', mbti: MBTI): string {
   return avatars[mbti];
 }
 
-/** 文本插值：将 {opponent.name}、{opponent.mbti} 等替换为实际值 */
+/** 文本插值：将 {opponent.name}、{opponent.mbti}、{player.name} 等替换为实际值 */
 function interpolateText(
   text: string,
-  ctx: { opponent: Candidate | null; player?: { description?: string } | null }
+  ctx: {
+    opponent: Candidate | null;
+    player?: { name?: string; description?: string; job?: string } | null;
+  }
 ): string {
   if (!ctx.opponent) return text;
   return text
     .replace(/\{opponent\.name\}/g, ctx.opponent.name)
     .replace(/\{opponent\.mbti\}/g, ctx.opponent.mbti)
+    .replace(/\{player\.name\}/g, ctx.player?.name ?? '')
     .replace(/\{player\.description\}/g, ctx.player?.description ?? '');
 }
 
-/** 判断选项条件是否通过 */
-function evaluateCondition(condition: AffectionCondition | undefined, affection: number): boolean {
-  if (!condition || condition.type !== 'affection') return true;
-  const { operator, value } = condition;
-  switch (operator) {
-    case '<=':
-      return affection <= value;
-    case '>=':
-      return affection >= value;
-    case '<':
-      return affection < value;
-    case '>':
-      return affection > value;
-    case '===':
-      return affection === value;
+/** 判断单个条件是否通过 */
+function evaluateSingleCondition(
+  condition: Condition,
+  ctx: {
+    affection: number;
+    alignment: number;
+    player: ReturnType<typeof usePlayerStore>['player'];
+    flags: Record<string, unknown>;
+  }
+): boolean {
+  switch (condition.type) {
+    case 'affection': {
+      const { operator, value } = condition;
+      switch (operator) {
+        case '<=':
+          return ctx.affection <= value;
+        case '>=':
+          return ctx.affection >= value;
+        case '<':
+          return ctx.affection < value;
+        case '>':
+          return ctx.affection > value;
+        case '===':
+          return ctx.affection === value;
+        default:
+          return true;
+      }
+    }
+    case 'alignment': {
+      const { operator, value } = condition;
+      switch (operator) {
+        case '<=':
+          return ctx.alignment <= value;
+        case '>=':
+          return ctx.alignment >= value;
+        case '<':
+          return ctx.alignment < value;
+        case '>':
+          return ctx.alignment > value;
+        case '===':
+          return ctx.alignment === value;
+        default:
+          return true;
+      }
+    }
+    case 'playerMbti':
+      return ctx.player?.mbti === condition.value;
+    case 'playerJob':
+      return ctx.player?.job === condition.value;
+    case 'flag':
+      return ctx.flags[condition.key] === condition.value;
     default:
       return true;
   }
 }
 
 /** 过滤出满足条件的选项 */
-function filterOptions(options: StoryOption[], affection: number): StoryOption[] {
-  return options.filter((opt) => evaluateCondition(opt.condition, affection));
+function filterOptions(
+  options: StoryOption[],
+  ctx: {
+    affection: number;
+    alignment: number;
+    player: ReturnType<typeof usePlayerStore>['player'];
+    flags: Record<string, unknown>;
+  }
+): StoryOption[] {
+  return options.filter((opt) => {
+    if (!opt.condition) return true;
+    const cond = opt.condition;
+    if (Array.isArray(cond)) {
+      return cond.every((c) => evaluateSingleCondition(c, ctx));
+    }
+    return evaluateSingleCondition(cond, ctx);
+  });
 }
 
-/** 执行选项效果（好感度） */
+/** 计算选项效果带来的好感度/贴合度变化量（用于播放对应 UI 音效） */
+function computeEffectDeltas(
+  effects: Effect[],
+  ctx: {
+    opponentMbti: MBTI;
+    playerMbti: MBTI | undefined;
+    playerJob: string | undefined;
+  }
+): { affectionDelta: number; alignmentDelta: number } {
+  let affectionDelta = 0;
+  let alignmentDelta = 0;
+  effects.forEach((eff) => {
+    if (eff.type === 'affection') {
+      if (eff.value != null) {
+        affectionDelta += eff.value;
+      } else if (eff.valueByMbti && ctx.opponentMbti in eff.valueByMbti) {
+        affectionDelta += eff.valueByMbti[ctx.opponentMbti] ?? 0;
+      }
+      return;
+    }
+    if (eff.type === 'alignment') {
+      if (eff.value != null) {
+        alignmentDelta += eff.value;
+      } else if (eff.valueByPlayerMbti && ctx.playerMbti && ctx.playerMbti in eff.valueByPlayerMbti) {
+        alignmentDelta += eff.valueByPlayerMbti[ctx.playerMbti] ?? 0;
+      }
+      return;
+    }
+    if (eff.type === 'jobEffect' && ctx.playerJob === eff.job) {
+      if (typeof eff.affection === 'number') affectionDelta += eff.affection;
+      if (typeof eff.alignment === 'number') alignmentDelta += eff.alignment;
+    }
+  });
+  return { affectionDelta, alignmentDelta };
+}
+
+/** 执行选项效果（好感度 / 贴合度 / 职业加成 / flag） */
 function applyEffects(
-  effects: AffectionEffect[],
-  opponentMbti: MBTI,
-  addAffection: (delta: number) => void
+  effects: Effect[],
+  ctx: {
+    opponentMbti: MBTI;
+    playerMbti: MBTI | undefined;
+    playerJob: string | undefined;
+    addAffection: (delta: number) => void;
+    addAlignment: (delta: number) => void;
+    setFlag: (key: string, value: unknown) => void;
+  }
 ): void {
   effects.forEach((eff) => {
-    if (eff.type !== 'affection' || eff.operator !== 'add') return;
-    if (eff.value != null) {
-      addAffection(eff.value);
-    } else if (eff.valueByMbti && opponentMbti in eff.valueByMbti) {
-      const delta = eff.valueByMbti[opponentMbti] ?? 0;
-      addAffection(delta);
+    if (eff.type === 'affection') {
+      if (eff.value != null) {
+        ctx.addAffection(eff.value);
+      } else if (eff.valueByMbti && ctx.opponentMbti in eff.valueByMbti) {
+        const delta = eff.valueByMbti[ctx.opponentMbti] ?? 0;
+        ctx.addAffection(delta);
+      }
+      return;
+    }
+
+    if (eff.type === 'alignment') {
+      if (eff.value != null) {
+        ctx.addAlignment(eff.value);
+        return;
+      }
+      if (eff.valueByPlayerMbti && ctx.playerMbti && ctx.playerMbti in eff.valueByPlayerMbti) {
+        const delta = eff.valueByPlayerMbti[ctx.playerMbti] ?? 0;
+        ctx.addAlignment(delta);
+      }
+      return;
+    }
+
+    if (eff.type === 'setFlag') {
+      ctx.setFlag(eff.key, eff.value);
+      return;
+    }
+
+    if (eff.type === 'jobEffect') {
+      if (ctx.playerJob && ctx.playerJob === eff.job) {
+        if (typeof eff.affection === 'number') {
+          ctx.addAffection(eff.affection);
+        }
+        if (typeof eff.alignment === 'number') {
+          ctx.addAlignment(eff.alignment);
+        }
+      }
     }
   });
 }
@@ -102,13 +239,18 @@ function GamePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const player = usePlayerStore((s) => s.player);
+  const currentScriptId = useScriptStore((s) => s.currentScriptId);
   const {
     opponent,
     currentChapter,
     currentNodeId,
     affection,
+    alignment,
+    flags,
     setCurrentNode,
     addAffection,
+    addAlignment,
+    setFlag,
   } = useGameStore();
 
   const [nodes, setNodes] = useState<StoryNode[]>([]);
@@ -117,11 +259,23 @@ function GamePage() {
 
   const chapterFromUrl = Math.min(4, Math.max(1, Number(searchParams.get('chapter')) || 1));
 
-  // 加载剧本
+  // 加载剧本（目前两个现代剧本共用同一套节点，后续可为不同剧本拆分独立 JSON）
   useEffect(() => {
-    fetch('/data/story.json')
+    let scriptPath = '/data/story.json';
+    if (currentScriptId && currentScriptId !== 'modern_love' && currentScriptId !== 'modern_love_2') {
+      scriptPath = `/data/scripts/${currentScriptId}.json`;
+    }
+    fetch(scriptPath)
       .then((res) => res.json())
-      .then((data: StoryNode[]) => setNodes(Array.isArray(data) ? data : []))
+      .then((data: Script | StoryNode[]) => {
+        if (Array.isArray(data)) {
+          setNodes(data);
+        } else if (data && Array.isArray((data as Script).nodes)) {
+          setNodes((data as Script).nodes);
+        } else {
+          setNodes([]);
+        }
+      })
       .catch(() => setNodes([]))
       .finally(() => setLoading(false));
   }, []);
@@ -144,9 +298,26 @@ function GamePage() {
     }
   }, [opponent, loading, nodes, chapterFromUrl, currentNodeId, setCurrentNode, navigate, setSearchParams]);
 
+  // 剧情页 BGM + 环境音：按当前章节切换（1 咖啡厅、2 公园、3 餐厅）
+  useEffect(() => {
+    if (!opponent || loading) return;
+    const chapter = currentChapter || chapterFromUrl;
+    if (chapter >= 1 && chapter <= 3) {
+      audioManager.playForChapter(chapter);
+    }
+    return () => {
+      // 离开游戏页时由目标页接管 BGM，这里不强制 stop
+    };
+  }, [opponent, loading, currentChapter, chapterFromUrl]);
+
   const currentNode = nodes.find((n) => n.id === currentNodeId);
   const visibleOptions = currentNode
-    ? filterOptions(currentNode.options, affection)
+    ? filterOptions(currentNode.options, {
+        affection,
+        alignment,
+        player,
+        flags,
+      })
     : [];
 
   const handleOptionClick = useCallback(
@@ -154,18 +325,38 @@ function GamePage() {
       if (!opponent || !currentNode) return;
       setPlaceholderMessage(null);
 
-      applyEffects(opt.effects, opponent.mbti, addAffection);
+      // UI 音效：按钮点击
+      audioManager.playSFX('ui_click');
+      const { affectionDelta, alignmentDelta } = computeEffectDeltas(opt.effects, {
+        opponentMbti: opponent.mbti,
+        playerMbti: player?.mbti,
+        playerJob: player?.job,
+      });
+      if (affectionDelta > 0) audioManager.playSFX('ui_affection_up');
+      else if (affectionDelta < 0) audioManager.playSFX('ui_affection_down');
+      if (alignmentDelta !== 0) audioManager.playSFX('ui_alignment');
+
+      // 先根据效果更新好感度 / 贴合度 / flag
+      applyEffects(opt.effects, {
+        opponentMbti: opponent.mbti,
+        playerMbti: player?.mbti,
+        playerJob: player?.job,
+        addAffection,
+        addAlignment,
+        setFlag,
+      });
 
       const next = nodes.find((n) => n.id === opt.nextNode);
       if (next) {
+        if (next.chapter !== currentChapter) audioManager.playSFX('ui_page_turn');
         setCurrentNode(next.id, next.chapter);
         setSearchParams({ chapter: String(next.chapter) }, { replace: true });
       } else {
-        // 单节点闭环：无下一节点时直接进入结局页
+        // 无下一节点时直接进入结局页
         navigate('/ending', { replace: true });
       }
     },
-    [opponent, currentNode, nodes, addAffection, setCurrentNode, setSearchParams, navigate]
+    [opponent, currentNode, nodes, currentChapter, player?.job, addAffection, addAlignment, setFlag, setCurrentNode, setSearchParams, navigate]
   );
 
   if (!opponent) return null;
@@ -231,6 +422,16 @@ function GamePage() {
                 />
               </div>
               <span className="game-page-affection-value">{affection}</span>
+            </div>
+            <div className="game-page-affection">
+              <span className="game-page-affection-label">贴合度</span>
+              <div className="game-page-affection-bar-wrap">
+                <div
+                  className="game-page-affection-bar game-page-alignment-bar"
+                  style={{ width: `${alignment}%` }}
+                />
+              </div>
+              <span className="game-page-affection-value">{alignment}</span>
             </div>
           </div>
         </header>
