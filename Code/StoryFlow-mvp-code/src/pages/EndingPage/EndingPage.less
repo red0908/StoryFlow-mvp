@@ -77,6 +77,32 @@
   text-align: center;
 }
 
+.ending-page-ai-wrap {
+  width: 100%;
+  padding: 1.1rem 1.25rem;
+  background: rgba(12, 12, 24, 0.48);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.ending-page-ai-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: @color-white-80;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.ending-page-ai-comment {
+  margin: 0.75rem 0 0;
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: @color-white-98;
+  text-align: left;
+  white-space: pre-line;
+}
+
 .ending-page-avatar-wrap {
   display: flex;
   flex-direction: column;
@@ -144,6 +170,20 @@
   }
 }
 
+.ending-page-btn-secondary {
+  color: @color-white-98;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+  }
+}
+
 .ending-page-btn-primary {
   color: @color-white-98;
   background: rgba(184, 74, 98, 0.5);
@@ -182,6 +222,14 @@
 
   .ending-page-comment {
     font-size: 0.95rem;
+  }
+
+  .ending-page-ai-wrap {
+    padding: 1rem 1.1rem;
+  }
+
+  .ending-page-ai-comment {
+    font-size: 0.9rem;
   }
 
   .ending-page-actions {

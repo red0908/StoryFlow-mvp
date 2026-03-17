@@ -75,9 +75,18 @@ export const useProfileStore = create<ProfileStoreState>((set, get) => ({
 
   appendEnding: (record) => {
     set((state) => {
+      const prevHistory = state.profile.endingHistory;
+      const newBadges = [...state.profile.badges];
+      if (prevHistory.length === 0 && !newBadges.includes('first_ending')) {
+        newBadges.push('first_ending');
+      }
+      if (record.endingType === 'success' && !newBadges.includes('soulmate_once')) {
+        newBadges.push('soulmate_once');
+      }
       const next = {
         ...state.profile,
-        endingHistory: [record, ...state.profile.endingHistory].slice(0, 50),
+        endingHistory: [record, ...prevHistory].slice(0, 50),
+        badges: newBadges,
       };
       saveProfileToStorage(next);
       return { profile: next };

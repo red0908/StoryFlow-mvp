@@ -6,6 +6,7 @@ import { usePlayerStore } from '../../stores/usePlayerStore';
 import { useProfileStore } from '../../stores/useProfileStore';
 import { useScriptStore } from '../../stores/useScriptStore';
 import { audioManager } from '../../audio';
+import { generateMockAIComment } from '../../utils/generateMockAIComment';
 import './EndingPage.less';
 
 const MBTI_AVATARS_MALE: Record<MBTI, string> = {
@@ -120,6 +121,12 @@ function EndingPage() {
     () => interpolateComment(config.comment, { opponent, player }),
     [config.comment, opponent, player]
   );
+  const aiComment = useMemo(() => generateMockAIComment(endingType, affection, alignment, opponent), [
+    endingType,
+    affection,
+    alignment,
+    opponent,
+  ]);
 
   useEffect(() => {
     if (!opponent) {
@@ -153,7 +160,7 @@ function EndingPage() {
       endingType,
       affection,
       alignment,
-      aiComment: '（AI 评价占位：后续接入/增强）',
+      aiComment,
     });
 
     bumpEncounter(opponent.mbti, {
@@ -167,6 +174,16 @@ function EndingPage() {
   const handleRestart = () => {
     resetGame();
     navigate('/scripts', { replace: true });
+  };
+
+  const handleToHeartMap = () => {
+    audioManager.playSFX('ui_click');
+    navigate('/map');
+  };
+
+  const handleToHome = () => {
+    audioManager.playSFX('ui_click');
+    navigate('/');
   };
 
   if (!opponent) return null;
@@ -183,6 +200,11 @@ function EndingPage() {
 
           <div className="ending-page-comment-wrap">
             <p className="ending-page-comment">{comment}</p>
+          </div>
+
+          <div className="ending-page-ai-wrap">
+            <div className="ending-page-ai-title">模拟 AI 评语</div>
+            <p className="ending-page-ai-comment">{aiComment}</p>
           </div>
 
           {player && (
@@ -203,6 +225,20 @@ function EndingPage() {
           </div>
 
           <div className="ending-page-actions">
+            <button
+              type="button"
+              className="ending-page-btn ending-page-btn-secondary"
+              onClick={handleToHeartMap}
+            >
+              查看心域地图
+            </button>
+            <button
+              type="button"
+              className="ending-page-btn ending-page-btn-secondary"
+              onClick={handleToHome}
+            >
+              返回首页
+            </button>
             <button
               type="button"
               className="ending-page-btn ending-page-btn-primary"

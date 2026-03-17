@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { MBTI } from '../../types';
 import { useProfileStore } from '../../stores/useProfileStore';
+import { audioManager } from '../../audio';
 import './HeartMapPage.less';
 
 const MBTI_COLORS: Record<MBTI, string> = {
@@ -117,10 +118,34 @@ function HeartMapPage() {
         </main>
 
         <footer className="heart-map-footer">
-          <button type="button" className="heart-map-btn heart-map-btn-secondary" onClick={() => navigate('/profile')}>
+          <button
+            type="button"
+            className="heart-map-btn heart-map-btn-secondary"
+            onClick={() => {
+              audioManager.playSFX('ui_click');
+              navigate('/');
+            }}
+          >
+            返回首页
+          </button>
+          <button
+            type="button"
+            className="heart-map-btn heart-map-btn-secondary"
+            onClick={() => {
+              audioManager.playSFX('ui_click');
+              navigate('/profile');
+            }}
+          >
             返回档案
           </button>
-          <button type="button" className="heart-map-btn heart-map-btn-secondary" onClick={() => navigate('/scripts')}>
+          <button
+            type="button"
+            className="heart-map-btn heart-map-btn-secondary"
+            onClick={() => {
+              audioManager.playSFX('ui_click');
+              navigate('/scripts');
+            }}
+          >
             去剧本大厅
           </button>
         </footer>

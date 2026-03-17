@@ -30,44 +30,29 @@
 // 标题：艺术字体、渐变、描边；上行大字「MBTI相亲局」，下行小字「MBTI Heartbeat Dating」
 @font-title: 'ZCOOL XiaoWei', 'Cormorant Garamond', 'Noto Serif SC', serif;
 
+// 标题区、中部图、按钮区间距（收紧：标题与中部、中部与按钮更近）
+.home-header {
+  padding: 0rem 0 0.5rem;
+}
+
+.home-main {
+  padding: 0.5rem 0 0.75rem;
+}
+
 .home-title {
-  font-family: @font-title;
   margin: 0;
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.25rem;
   animation: home-title-in 1s ease-out both;
 
-  /* 暖黄棕背景下主标题：加强阴影以在暖色背景上清晰可读 */
-  &-main {
-    font-size: clamp(2.75rem, 5.5vw, 4.5rem);
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    line-height: 1.15;
-    background: linear-gradient(165deg, #fffef9 0%, #fce8ec 35%, #f5d8e0 70%, #f0e6e8 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.7);
-    paint-order: stroke fill;
-    text-shadow: none;
-    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3)) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2)) drop-shadow(0 0 24px rgba(255, 230, 240, 0.35));
-  }
-
-  &-sub {
-    font-family: 'Cormorant Garamond', @font-title;
-    font-size: clamp(1rem, 1.8vw, 1.35rem);
-    font-weight: 600;
-    letter-spacing: 0.35em;
-    opacity: 0.92;
-    background: linear-gradient(120deg, rgba(255, 254, 250, 0.95) 0%, rgba(252, 232, 238, 0.9) 50%, rgba(245, 220, 228, 0.95) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-stroke: 0.75px rgba(255, 255, 255, 0.75);
-    paint-order: stroke fill;
-    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.25)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+  /* 标题图：艺术字无背景图，响应式宽度 */
+  &-img {
+    display: block;
+    max-width: min(90vw, 520px);
+    width: 100%;
+    height: auto;
+    object-fit: contain;
   }
 
   &-underline {
@@ -77,7 +62,7 @@
     flex-basis: 100%;
     margin-left: auto;
     margin-right: auto;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
     border-radius: 2px;
     animation: home-title-underline-in 0.8s ease-out 0.3s both;
   }
@@ -105,15 +90,15 @@
   }
 }
 
-// 整体布局：标题+卡片+按钮成组居中，更集中
+// 整体布局：标题、中部图、按钮区之间留出明确间隔
 .home-layout {
   gap: 0;
 }
 
-// 底部按钮区：与卡片区收紧，整体更协调
+// 底部按钮区：上移，与中部图间距收紧
 .home-footer {
-  padding: 1.25rem 1.5rem 1.75rem;
-  margin-top: 0.25rem;
+  padding: 0rem 1.5rem 1.5rem;
+  margin-top: 0;
 }
 
 // 爱心泡泡雨
@@ -373,17 +358,16 @@
 // ========== 移动端适配（方案文档 20260317） ==========
 // 移动端 <768px：正常流式布局，标题 / 卡片 / 按钮分区清晰；按钮宽度对齐
 @media (max-width: 767px) {
-  .home-title-main {
-    font-size: clamp(1.75rem, 8vw, 2.5rem);
-    letter-spacing: 0.25em;
+  .home-header {
+    padding: 0rem 0 0.4rem;
   }
 
-  .home-title-sub {
-    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  .home-main {
+    padding: 0.4rem 0 0.5rem;
   }
 
   .home-footer {
-    padding: 1rem 1rem 1.25rem;
+    padding: 0rem 1rem 1.25rem;
     flex-direction: column;
     align-items: center;
     gap: 0.6rem;
@@ -441,14 +425,6 @@
 
 // 平板 768~1024px
 @media (min-width: 768px) and (max-width: 1023px) {
-  .home-title-main {
-    font-size: clamp(2.25rem, 4.5vw, 3.5rem);
-  }
-
-  .home-title-sub {
-    font-size: clamp(1rem, 1.8vw, 1.25rem);
-  }
-
   .home-btn {
     min-height: 44px;
   }
