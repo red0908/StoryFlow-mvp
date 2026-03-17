@@ -68,7 +68,7 @@ function ScriptHall() {
 
   return (
     <div
-      className="script-hall-page min-h-screen min-w-[1280px] flex flex-col bg-cover bg-center bg-no-repeat"
+      className="script-hall-page min-h-screen w-full min-w-0 lg:min-w-[1280px] flex flex-col bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: 'url(/background/bg-01.png)' }}
     >
       <div className="script-hall-content flex flex-col flex-1 items-center py-10 px-6">

@@ -173,7 +173,7 @@ function EndingPage() {
 
   return (
     <div
-      className={`ending-page min-h-screen min-w-[1280px] flex flex-col bg-cover bg-center bg-no-repeat ${config.filterClass ?? ''}`}
+      className={`ending-page min-h-screen w-full min-w-0 lg:min-w-[1280px] flex flex-col bg-cover bg-center bg-no-repeat ${config.filterClass ?? ''}`}
       style={{ backgroundImage: 'url(/background/bg-01.png)' }}
     >
       <div className="ending-page-content flex flex-col flex-1 items-center justify-center">

@@ -44,7 +44,7 @@ function ProfilePage() {
 
   return (
     <div
-      className="profile-page min-h-screen min-w-[1280px] flex flex-col bg-cover bg-center bg-no-repeat"
+      className="profile-page min-h-screen w-full min-w-0 lg:min-w-[1280px] flex flex-col bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: 'url(/background/bg-01.png)' }}
     >
       <div className="profile-page-content flex flex-col flex-1 items-center py-10 px-6">

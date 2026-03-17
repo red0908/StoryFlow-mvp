@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Candidate, MBTI } from '../../types';
 import { usePlayerStore } from '../../stores/usePlayerStore';
@@ -9,6 +9,8 @@ import {
   type GameConfigFull,
 } from '../../utils/generateCandidates';
 import './BlindDate.less';
+
+const AUTO_SCROLL_INTERVAL_MS = 4000;
 
 const MBTI_AVATARS_MALE: Record<MBTI, string> = {
   ENFJ: '/person_img/avatar_male_enfj.png',
@@ -45,6 +47,11 @@ function BlindDatePage() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
   const [confirming, setConfirming] = useState<Candidate | null>(null);
+  const [scrollIndex, setScrollIndex] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const autoScrollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const scrollIndexRef = useRef(0);
+  scrollIndexRef.current = scrollIndex;
 
   useEffect(() => {
     if (!player) {
@@ -65,7 +72,52 @@ function BlindDatePage() {
     if (!config || !player) return;
     setCandidates(generateCandidates(config, player.gender));
     setConfirming(null);
+    setScrollIndex(0);
   }, [config, player]);
+
+  const n = candidates.length;
+  const GAP = 16;
+
+  const goToIndex = useCallback(
+    (index: number) => {
+      const i = Math.max(0, Math.min(index, n - 1));
+      setScrollIndex(i);
+      const container = scrollContainerRef.current;
+      if (!container || !container.children.length) return;
+      const firstCard = container.children[0] as HTMLElement;
+      const cardWidth = firstCard.offsetWidth;
+      const paddingLeft = parseFloat(getComputedStyle(container).paddingLeft) || (container.clientWidth - cardWidth) / 2;
+      const targetScrollLeft = paddingLeft + i * (cardWidth + GAP);
+      container.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
+    },
+    [n]
+  );
+
+  useEffect(() => {
+    if (n <= 0) return;
+    const timer = setInterval(() => {
+      const next = (scrollIndexRef.current + 1) % n;
+      goToIndex(next);
+    }, AUTO_SCROLL_INTERVAL_MS);
+    autoScrollTimerRef.current = timer;
+    return () => clearInterval(timer);
+  }, [n, goToIndex]);
+
+  const handleScroll = useCallback(() => {
+    const container = scrollContainerRef.current;
+    if (!container || n <= 0) return;
+    const scrollLeft = container.scrollLeft;
+    const clientWidth = container.clientWidth;
+    const firstCard = container.children[0] as HTMLElement | undefined;
+    if (!firstCard) return;
+    const cardWidth = firstCard.offsetWidth;
+    const paddingLeft = parseFloat(getComputedStyle(container).paddingLeft) || (clientWidth - cardWidth) / 2;
+    const center = scrollLeft + clientWidth / 2;
+    const cardCenter = paddingLeft + cardWidth / 2;
+    const index = Math.round((center - cardCenter) / (cardWidth + GAP));
+    const clamped = Math.max(0, Math.min(index, n - 1));
+    setScrollIndex(clamped);
+  }, [n]);
 
   const confirmSelect = useCallback(
     (c: Candidate) => {
@@ -94,7 +146,7 @@ function BlindDatePage() {
 
   return (
     <div
-      className="blind-date-page min-h-screen min-w-[1280px] flex flex-col bg-cover bg-center bg-no-repeat"
+      className="blind-date-page min-h-screen w-full min-w-0 lg:min-w-[1280px] flex flex-col bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: 'url(/background/bg-01.png)' }}
     >
       <div className="blind-date-content flex flex-col flex-1 items-center py-10 px-6">
@@ -113,14 +165,27 @@ function BlindDatePage() {
           </div>
         )}
 
-        <div className="blind-date-cards">
-          {candidates.map((c) => (
-            <button
-              key={c.id}
-              type="button"
-              className="blind-date-card"
-              onClick={() => setConfirming(c)}
-            >
+        <div className="blind-date-cards-outer">
+          <button
+            type="button"
+            className="blind-date-cards-prev"
+            onClick={() => goToIndex(scrollIndex - 1)}
+            aria-label="上一个"
+          >
+            ‹
+          </button>
+          <div
+            ref={scrollContainerRef}
+            className="blind-date-cards"
+            onScroll={handleScroll}
+          >
+            {candidates.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                className="blind-date-card"
+                onClick={() => setConfirming(c)}
+              >
               <div
                 className="blind-date-card-bg"
                 style={{ backgroundImage: 'url(/background/card.png)' }}
@@ -149,6 +214,29 @@ function BlindDatePage() {
               </div>
             </button>
           ))}
+          </div>
+          <button
+            type="button"
+            className="blind-date-cards-next"
+            onClick={() => goToIndex(scrollIndex + 1)}
+            aria-label="下一个"
+          >
+            ›
+          </button>
+          <div className="blind-date-cards-dots" role="tablist" aria-label="候选人">
+            {/* <span className="blind-date-cards-dots-hint" aria-hidden>···</span> */}
+            {candidates.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                role="tab"
+                aria-selected={i === scrollIndex}
+                className={`blind-date-dot ${i === scrollIndex ? 'blind-date-dot-active' : ''}`}
+                onClick={() => goToIndex(i)}
+                aria-label={`第 ${i + 1} 位`}
+              />
+            ))}
+          </div>
         </div>
 
         <footer className="blind-date-footer">

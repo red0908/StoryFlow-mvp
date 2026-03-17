@@ -12,3 +12,11 @@ body,
   min-height: 100%;
   font-family: @font-base;
 }
+
+// 移动端：减少点击延迟，安全区由各页固定顶/底栏使用 env(safe-area-inset-*) 处理
+@media (hover: none) and (pointer: coarse) {
+  a,
+  button {
+    touch-action: manipulation;
+  }
+}

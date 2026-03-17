@@ -68,7 +68,7 @@ function HomePage() {
 
   return (
     <div
-      className="min-h-screen min-w-[1280px] flex flex-col bg-cover bg-center bg-no-repeat relative"
+      className="min-h-screen w-full min-w-0 lg:min-w-[1280px] flex flex-col bg-cover bg-center bg-no-repeat relative"
       style={{
         backgroundImage: 'url(/background/bg-01.png)',
       }}
@@ -92,7 +92,7 @@ function HomePage() {
         ))}
       </div>
 
-      <div className="relative z-[1] flex flex-col flex-1 justify-center items-center">
+      <div className="home-page-inner relative z-[1] flex flex-col flex-1 justify-center items-center">
       <div className="home-layout flex flex-col items-center w-full max-w-6xl">
       {/* 头部标题：艺术字体 + 渐变 + 描边 */}
       <header className="flex-shrink-0 pt-6 pb-5 text-center">
@@ -105,7 +105,7 @@ function HomePage() {
 
       {/* 中部：四张任务卡片 */}
       <main className="flex-shrink-0 flex items-center justify-center px-6 py-4">
-        <div className="grid grid-cols-4 gap-8 max-w-5xl">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 max-w-5xl w-full px-2 sm:px-4">
           {CARDS.map((card) => (
             <div
               key={card.mbti}
@@ -148,7 +148,7 @@ function HomePage() {
       </main>
 
       {/* 底部按钮区 */}
-      <footer className="home-footer flex-shrink-0 flex items-center justify-center gap-10">
+      <footer className="home-footer flex-shrink-0 flex flex-wrap items-center justify-center gap-4 sm:gap-6 lg:gap-10 px-4">
         <button
           type="button"
           onClick={() => {

@@ -278,3 +278,109 @@
   background: rgba(0, 0, 0, 0.25);
   border-radius: 8px;
 }
+
+// ========== 移动端适配（方案文档 20260317） ==========
+@media (max-width: 767px) {
+  .game-page-content {
+    padding: 1rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .game-page-header {
+    padding: 0.6rem 1rem;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .game-page-chapter {
+    font-size: 1rem;
+    width: 100%;
+    text-align: center;
+  }
+
+  .game-page-status {
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .game-page-player-avatar,
+  .game-page-opponent-avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .game-page-affection-bar-wrap {
+    width: 60px;
+  }
+
+  .game-page-affection-label {
+    font-size: 0.75rem;
+  }
+
+  .game-page-main {
+    margin-bottom: 1rem;
+    min-height: 280px;
+  }
+
+  .game-page-story-card {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.25rem 1rem;
+    min-height: auto;
+  }
+
+  .game-page-story-body {
+    order: 1;
+    align-items: flex-start;
+  }
+
+  .game-page-story-text {
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .game-page-story-figure {
+    order: 0;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .game-page-story-avatar {
+    height: 200px;
+    max-width: 160px;
+  }
+
+  .game-page-options-wrap {
+    margin-top: 0.75rem;
+    padding: 1rem;
+  }
+
+  .game-page-options {
+    gap: 0.6rem;
+  }
+
+  .game-page-option-btn {
+    min-height: 44px;
+    padding: 0.85rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .game-page-option-btn:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .game-page-content {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .game-page-header .game-page-chapter {
+    font-size: 1.05rem;
+  }
+
+  .game-page-option-btn {
+    min-height: 44px;
+  }
+}

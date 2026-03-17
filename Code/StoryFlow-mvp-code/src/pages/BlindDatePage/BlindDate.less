@@ -36,6 +36,7 @@
   margin-bottom: 0.5rem;
 }
 
+/* 暖黄棕背景下的标题：加强描边与阴影以提升可读性 */
 .blind-date-title {
   font-family: @font-serif;
   font-size: clamp(1.75rem, 3vw, 2.25rem);
@@ -43,14 +44,15 @@
   letter-spacing: 0.2em;
   margin: 0 0 0.5rem 0;
   color: @color-white-98;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.25), 0 0 1px rgba(0, 0, 0, 0.2);
 }
 
 .blind-date-subtitle {
   font-size: 1rem;
   letter-spacing: 0.15em;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.9);
   margin: 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 }
 
 .blind-date-my-info {
@@ -64,6 +66,12 @@
   background: @color-white-08;
   backdrop-filter: blur(10px);
   border: 1px solid @color-white-15;
+}
+
+.blind-date-my-name {
+  font-weight: 600;
+  color: @color-white-98;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
 .blind-date-my-mbti {
@@ -83,20 +91,31 @@
   white-space: nowrap;
 }
 
+/* 桌面：无外层，卡片区保持原样 */
+.blind-date-cards-outer {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto 2rem;
+}
+
+.blind-date-cards-prev,
+.blind-date-cards-next,
+.blind-date-cards-dots {
+  display: none;
+}
+
 .blind-date-cards {
   display: flex;
   flex-wrap: nowrap;
   justify-content: center;
   gap: 1.25rem;
-  max-width: 1400px;
-  margin: 0 auto 2rem;
 }
 
 .blind-date-card {
   position: relative;
   flex: 0 0 220px;
   width: 220px;
-  min-height: 300px;
+  min-height: 380px; /* 与 card-inner 一致，容纳增高后的头像区 */
   padding: 0;
   border: none;
   border-radius: 1.25rem;
@@ -127,7 +146,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-height: 300px;
+  min-height: 380px; /* 随头像区增高，保证卡片不挤压头像 */
   padding: 0.85rem;
   background: @color-white-08;
   backdrop-filter: blur(12px);
@@ -136,19 +155,25 @@
   box-shadow: 0 8px 32px @color-black-15, inset 0 1px 0 @color-white-25;
 }
 
+// 人物头像区：固定高度并保证头部不被裁切（半身立绘以顶部为视觉重心）
 .blind-date-card-avatar-wrap {
   width: 100%;
-  height: 160px;
+  height: 200px;
+  min-height: 200px;
   border-radius: 12px;
   overflow: hidden;
   background: @color-white-15;
   flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 .blind-date-card-avatar {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: top center; /* 优先显示头部，避免上方被裁切 */
 }
 
 .blind-date-card-info {
@@ -216,13 +241,18 @@
     transform: translateY(-2px);
   }
 
+  /* 暖黄棕背景下次级按钮：略加深底与边框，提升与背景的区分度 */
   &-secondary {
-    border: 1px solid @color-white-45;
-    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: rgba(50, 40, 35, 0.25);
     color: @color-white-98;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
     &:hover {
-      background: rgba(255, 255, 255, 0.18);
+      background: rgba(60, 50, 45, 0.35);
+      border-color: rgba(255, 255, 255, 0.6);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
   }
 
@@ -275,4 +305,260 @@
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
+}
+
+// ========== 移动端适配（方案文档 20260317） ==========
+@media (max-width: 767px) {
+  .blind-date-content {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .blind-date-header {
+    margin-bottom: 0.75rem;
+  }
+
+  .blind-date-title {
+    font-size: clamp(1.35rem, 4vw, 1.65rem);
+  }
+
+  .blind-date-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .blind-date-my-info {
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .blind-date-my-desc {
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+    white-space: normal;
+  }
+
+  /* 移动端：单行横向滚动，一卡一屏 + 左右按钮 + 圆点指示，整体居中 */
+  .blind-date-cards-outer {
+    position: relative;
+    margin-bottom: 0.5rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .blind-date-cards-prev,
+  .blind-date-cards-next {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.35);
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  .blind-date-cards-prev {
+    left: 0.25rem;
+  }
+
+  .blind-date-cards-next {
+    right: 0.25rem;
+  }
+
+  .blind-date-cards {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    /* 左右留白使当前卡片在可视区居中 */
+    padding-left: calc(50% - 40vw);
+    padding-right: calc(50% - 40vw);
+    margin: 0;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  /* 每张卡固定宽度，保证 5 张卡都能横向滚动 */
+  .blind-date-card {
+    flex: 0 0 80vw;
+    width: 80vw;
+    max-width: 320px;
+    min-height: 360px;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    box-sizing: border-box;
+  }
+
+  .blind-date-card-inner {
+    min-height: 360px;
+    padding: 0.75rem;
+  }
+
+  .blind-date-card-avatar-wrap {
+    height: 180px;
+    min-height: 180px;
+  }
+
+  .blind-date-card:hover {
+    transform: scale(1.02);
+  }
+
+  /* 滚动提示栏：5 个圆点都可见，当前卡片对应的圆点略放大 */
+  .blind-date-cards-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem 1rem;
+    margin: 0 1rem;
+    min-height: 44px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    overflow: visible;
+  }
+
+  .blind-date-cards-dots-hint {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-right: 0.5rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* 用 button 选择器覆盖 Tailwind preflight 对 button 的 background 重置，避免圆点变透明 */
+  button.blind-date-dot {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.65);
+    background-image: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+    -webkit-appearance: none;
+    appearance: none;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.85);
+    }
+  }
+
+  /* 当前展示的卡片对应圆点略放大，其余 4 个保持可见 */
+  button.blind-date-dot-active {
+    background-color: rgba(255, 255, 255, 0.95);
+    background-image: none;
+    transform: scale(1.2);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+  }
+
+  .blind-date-footer {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    padding-top: 0.75rem;
+    width: 100%;
+    max-width: 280px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .blind-date-footer .blind-date-btn {
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    text-align: center;
+  }
+
+  /* 移动端按钮加背景，避免与暖黄棕背景相融 */
+  .blind-date-footer .blind-date-btn-secondary {
+    background: rgba(45, 38, 35, 0.65);
+    border-color: rgba(255, 255, 255, 0.55);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+
+  .blind-date-footer .blind-date-btn-secondary:hover {
+    background: rgba(55, 46, 42, 0.75);
+    border-color: rgba(255, 255, 255, 0.65);
+  }
+
+  .blind-date-footer .blind-date-btn-primary {
+    background: linear-gradient(145deg, @color-primary 0%, @color-primary-dark 100%);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 20px rgba(184, 74, 98, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  .blind-date-modal-overlay {
+    padding: 1rem;
+    align-items: flex-end;
+  }
+
+  .blind-date-modal {
+    width: 100%;
+    max-width: calc(100% - 2rem);
+    padding: 1.5rem 1.25rem;
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+    border-radius: 1.25rem 1.25rem 0 0;
+  }
+
+  .blind-date-modal-text {
+    font-size: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .blind-date-modal-actions .blind-date-btn {
+    min-height: 44px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .blind-date-cards {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .blind-date-card {
+    flex: 0 0 200px;
+    width: 200px;
+  }
+
+  .blind-date-btn {
+    min-height: 44px;
+  }
 }

@@ -148,11 +148,19 @@ function CreateRole() {
 
   return (
     <div
-      className="create-role-page min-h-screen min-w-[1280px] flex flex-col bg-cover bg-center bg-no-repeat"
+      className="create-role-page min-h-screen w-full min-w-0 lg:min-w-[1280px] flex flex-col bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: 'url(/background/bg-01.png)' }}
     >
       <div className="create-role-content flex flex-col flex-1 items-center justify-center py-10 px-6">
         <header className="create-role-header text-center mb-6">
+          <button
+            type="button"
+            className="create-role-back-home"
+            onClick={() => navigate('/')}
+            aria-label="返回首页"
+          >
+            返回首页
+          </button>
           <h1 className="create-role-title">创建我的角色</h1>
           <p className="create-role-subtitle">
             {currentScript

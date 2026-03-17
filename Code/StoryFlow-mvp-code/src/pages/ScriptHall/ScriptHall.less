@@ -186,3 +186,69 @@
   background: rgba(0, 0, 0, 0.55);
 }
 
+// ========== 移动端适配（方案文档 20260317） ==========
+@media (max-width: 767px) {
+  .script-hall-content {
+    padding: 1rem;
+    padding-top: 1.5rem;
+  }
+
+  .script-hall-header .script-hall-title {
+    font-size: 28px;
+  }
+
+  .script-hall-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .script-hall-top-actions {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .script-hall-top-btn {
+    min-height: 44px;
+    padding: 10px 14px;
+  }
+
+  .script-hall-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .script-hall-card-inner {
+    padding: 14px 16px 12px;
+    min-height: 160px;
+  }
+
+  .script-hall-card:not(.script-hall-card-locked):hover {
+    transform: translateY(-2px);
+  }
+
+  .script-hall-footer {
+    margin-top: 1.5rem;
+  }
+
+  .script-hall-btn {
+    min-height: 44px;
+    padding: 12px 24px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .script-hall-header .script-hall-title {
+    font-size: 34px;
+  }
+
+  .script-hall-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .script-hall-btn {
+    min-height: 44px;
+  }
+}
+
