@@ -104,13 +104,13 @@ function HomePage() {
       </header>
 
       {/* 中部：四人融合大图 */}
-      <main className="home-main flex-shrink-0 flex items-center justify-center px-4">
+      {/* <main className="home-main flex-shrink-0 flex items-center justify-center px-4">
         <img
           src="/person_img/main_person.png"
           alt="人物"
           className="max-w-[min(90vw,720px)] max-h-[60vh] w-auto h-auto object-contain"
         />
-      </main>
+      </main> */}
 
       {/* 底部按钮区 */}
       <footer className="home-footer flex-shrink-0 flex flex-wrap items-center justify-center gap-4 sm:gap-6 lg:gap-10 px-4">
