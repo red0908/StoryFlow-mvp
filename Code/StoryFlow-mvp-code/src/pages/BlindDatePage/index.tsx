@@ -11,6 +11,7 @@ import {
 import './BlindDate.less';
 
 const AUTO_SCROLL_INTERVAL_MS = 4000;
+const PLAYER_STORAGE_KEY = 'storyflow_player';
 
 const MBTI_AVATARS_MALE: Record<MBTI, string> = {
   ENFJ: '/person_img/avatar_male_enfj.png',
@@ -46,6 +47,7 @@ function BlindDatePage() {
   const [config, setConfig] = useState<GameConfigFull | null>(null);
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
+  const [playerHydrated, setPlayerHydrated] = useState(false);
   const [confirming, setConfirming] = useState<Candidate | null>(null);
   const [scrollIndex, setScrollIndex] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -53,7 +55,21 @@ function BlindDatePage() {
   const scrollIndexRef = useRef(0);
   scrollIndexRef.current = scrollIndex;
 
+  // 先从 localStorage 恢复角色（与创建页写入的 key 一致），避免 store 未同步时误判无角色
   useEffect(() => {
+    if (!usePlayerStore.getState().player) {
+      try {
+        const raw = localStorage.getItem(PLAYER_STORAGE_KEY);
+        if (raw) usePlayerStore.getState().setPlayer(JSON.parse(raw));
+      } catch {
+        /* ignore */
+      }
+    }
+    setPlayerHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!playerHydrated) return;
     if (!player) {
       navigate('/create/myRole', { replace: true });
       return;
@@ -66,7 +82,7 @@ function BlindDatePage() {
       })
       .catch(() => setCandidates([]))
       .finally(() => setLoading(false));
-  }, [player, navigate]);
+  }, [playerHydrated, player, navigate]);
 
   const refreshCandidates = useCallback(() => {
     if (!config || !player) return;
@@ -134,7 +150,13 @@ function BlindDatePage() {
     confirmSelect(random);
   }, [candidates, confirmSelect]);
 
-  if (!player) return null;
+  if (!playerHydrated || !player) {
+    return (
+      <div className="blind-date-page blind-date-loading">
+        <div className="blind-date-loading-text">加载中…</div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

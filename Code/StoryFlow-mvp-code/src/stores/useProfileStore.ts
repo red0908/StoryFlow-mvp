@@ -8,11 +8,26 @@ function getDefaultProfile(): PlayerProfile {
     displayName: '',
     charmLevel: 1,
     charmExp: 0,
-    unlockedScripts: ['modern_love', 'modern_love_2'],
+    unlockedScripts: ['modern_love', 'modern_love_2', 'modern_love_v2'],
     characterCollection: {},
     endingHistory: [],
     badges: [],
   };
+}
+
+function saveProfileToStorage(profile: PlayerProfile) {
+  try {
+    localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+  } catch {
+    // ignore
+  }
+}
+
+/** 默认免费剧本 + 本地已解锁合并；旧存档里没有新加的默认 id 时也会自动解锁 */
+function mergeUnlockedScripts(saved: string[] | undefined): string[] {
+  const baseline = getDefaultProfile().unlockedScripts;
+  const extra = Array.isArray(saved) ? saved : [];
+  return [...new Set([...baseline, ...extra])];
 }
 
 function loadProfileFromStorage(): PlayerProfile {
@@ -21,24 +36,22 @@ function loadProfileFromStorage(): PlayerProfile {
     if (!raw) return getDefaultProfile();
     const parsed = JSON.parse(raw) as Partial<PlayerProfile> | null;
     if (!parsed || typeof parsed !== 'object') return getDefaultProfile();
-    return {
+    const mergedUnlocked = mergeUnlockedScripts(parsed.unlockedScripts);
+    const profile: PlayerProfile = {
       ...getDefaultProfile(),
       ...parsed,
       characterCollection: parsed.characterCollection ?? {},
       endingHistory: parsed.endingHistory ?? [],
       badges: parsed.badges ?? [],
-      unlockedScripts: parsed.unlockedScripts ?? getDefaultProfile().unlockedScripts,
+      unlockedScripts: mergedUnlocked,
     };
+    const prev = JSON.stringify(parsed.unlockedScripts ?? []);
+    if (JSON.stringify(mergedUnlocked) !== prev) {
+      saveProfileToStorage(profile);
+    }
+    return profile;
   } catch {
     return getDefaultProfile();
-  }
-}
-
-function saveProfileToStorage(profile: PlayerProfile) {
-  try {
-    localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
-  } catch {
-    // ignore
   }
 }
 

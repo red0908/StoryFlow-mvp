@@ -14,6 +14,13 @@
     "cover": "/background/script_modern_love_2.png"
   },
   {
+    "id": "modern_love_v2",
+    "title": "都市迷情 · 修订篇（双数值重平衡）",
+    "description": "在旧版流程上重调选项：总选「场面话」易表面和谐；灵魂伴侣需真诚与台阶交替。含隐藏线，适合多周目。",
+    "recommendedMbti": ["ENFJ", "INTJ", "INFJ", "ENTJ"],
+    "cover": "/background/script_modern_love.png"
+  },
+  {
     "id": "coming_soon",
     "title": "新剧本开发中",
     "description": "更多风格的故事正在制作中，敬请期待后续更新。",

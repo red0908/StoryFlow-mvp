@@ -8,6 +8,7 @@ import type {
   Effect,
   Candidate,
   MBTI,
+  Player,
 } from '../../types';
 import { useGameStore } from '../../stores/useGameStore';
 import { usePlayerStore } from '../../stores/usePlayerStore';
@@ -259,15 +260,35 @@ function GamePage() {
 
   const chapterFromUrl = Math.min(4, Math.max(1, Number(searchParams.get('chapter')) || 1));
 
-  // 加载剧本（目前两个现代剧本共用同一套节点，后续可为不同剧本拆分独立 JSON）
+  // 从 localStorage 恢复玩家角色（避免 HMR/异常导致 store 空但已创建过角色）
+  useEffect(() => {
+    if (usePlayerStore.getState().player) return;
+    try {
+      const raw = localStorage.getItem('storyflow_player');
+      if (raw) {
+        usePlayerStore.getState().setPlayer(JSON.parse(raw) as Player);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  // 加载剧本：必须依赖 currentScriptId，否则修订篇等会错误沿用首次挂载时的路径
   useEffect(() => {
     let scriptPath = '/data/story.json';
     if (currentScriptId && currentScriptId !== 'modern_love' && currentScriptId !== 'modern_love_2') {
       scriptPath = `/data/scripts/${currentScriptId}.json`;
     }
+    setLoading(true);
+    setNodes([]);
+    let cancelled = false;
     fetch(scriptPath)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`剧本加载失败 ${res.status}`);
+        return res.json();
+      })
       .then((data: Script | StoryNode[]) => {
+        if (cancelled) return;
         if (Array.isArray(data)) {
           setNodes(data);
         } else if (data && Array.isArray((data as Script).nodes)) {
@@ -276,9 +297,16 @@ function GamePage() {
           setNodes([]);
         }
       })
-      .catch(() => setNodes([]))
-      .finally(() => setLoading(false));
-  }, []);
+      .catch(() => {
+        if (!cancelled) setNodes([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [currentScriptId]);
 
   // 无对手时重定向；同步 URL 章节；空节点时设为本章第一个节点
   useEffect(() => {
@@ -312,7 +340,7 @@ function GamePage() {
 
   const currentNode = nodes.find((n) => n.id === currentNodeId);
   const visibleOptions = currentNode
-    ? filterOptions(currentNode.options, {
+    ? filterOptions(currentNode.options ?? [], {
         affection,
         alignment,
         player,
@@ -327,7 +355,8 @@ function GamePage() {
 
       // UI 音效：按钮点击
       audioManager.playSFX('ui_click');
-      const { affectionDelta, alignmentDelta } = computeEffectDeltas(opt.effects, {
+      const effects = opt.effects ?? [];
+      const { affectionDelta, alignmentDelta } = computeEffectDeltas(effects, {
         opponentMbti: opponent.mbti,
         playerMbti: player?.mbti,
         playerJob: player?.job,
@@ -337,7 +366,7 @@ function GamePage() {
       if (alignmentDelta !== 0) audioManager.playSFX('ui_alignment');
 
       // 先根据效果更新好感度 / 贴合度 / flag
-      applyEffects(opt.effects, {
+      applyEffects(effects, {
         opponentMbti: opponent.mbti,
         playerMbti: player?.mbti,
         playerJob: player?.job,

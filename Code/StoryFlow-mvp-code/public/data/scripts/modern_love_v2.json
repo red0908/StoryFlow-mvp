@@ -1,0 +1,1083 @@
+{
+  "id": "modern_love_v2",
+  "title": "都市迷情·修订篇",
+  "description": "双数值重平衡：一味选第一项易「表面和谐」；需交替选真诚项才能冲灵魂伴侣。含隐藏线（回声/设计师/医生/高贴合）。",
+  "recommendedMbti": [
+    "ENFJ",
+    "INTJ",
+    "INFJ",
+    "ENTJ"
+  ],
+  "characters": [
+    "ENFJ",
+    "INTJ",
+    "INFJ",
+    "ENTJ"
+  ],
+  "nodes": [
+    {
+      "id": "c1_node1",
+      "chapter": 1,
+      "scene": "咖啡店",
+      "text": "你坐在咖啡厅，等待 {opponent.name}。她/他穿着简单的衬衫走来，笑着打招呼——那种 {opponent.mbti} 特有的节奏，让你一瞬间有点紧张。",
+      "options": [
+        {
+          "text": "热情回应，先说「等你好久了」把气氛撑起来。",
+          "nextNode": "c1_node2",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 3
+            },
+            {
+              "type": "alignment",
+              "value": -2
+            }
+          ]
+        },
+        {
+          "text": "聊聊工作与日常，从踏实的话题切入。",
+          "nextNode": "c1_node2",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 1
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": 1,
+                "INTJ": 2,
+                "INFJ": 2,
+                "ENTJ": 2
+              }
+            }
+          ]
+        },
+        {
+          "text": "开个小玩笑，自嘲「相亲比上班还正式」。",
+          "nextNode": "c1_node2",
+          "effects": [
+            {
+              "type": "affection",
+              "valueByMbti": {
+                "ENFJ": 2,
+                "INTJ": 0,
+                "INFJ": 1,
+                "ENTJ": 2
+              }
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": 2,
+                "INTJ": 2,
+                "INFJ": 2,
+                "ENTJ": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c1_node2",
+      "chapter": 1,
+      "scene": "咖啡店",
+      "text": "{opponent.name} 提到最近加班多，但还挺有成就感。她/他看你的眼神像在等一句「接得住」的话。",
+      "options": [
+        {
+          "text": "大力认同：「能扛事的人最值得佩服。」",
+          "nextNode": "c1_node3",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 3
+            },
+            {
+              "type": "alignment",
+              "value": -2
+            },
+            {
+              "type": "jobEffect",
+              "job": "医生",
+              "affection": 1,
+              "alignment": 0
+            },
+            {
+              "type": "jobEffect",
+              "job": "教师",
+              "affection": 1,
+              "alignment": 0
+            }
+          ]
+        },
+        {
+          "text": "也说说自己的压力和纠结，不装轻松。",
+          "nextNode": "c1_node3",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 2
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": 2,
+                "INTJ": 2,
+                "INFJ": 2,
+                "ENTJ": 2
+              }
+            }
+          ]
+        },
+        {
+          "text": "提议先点单，边喝边聊，不急着深聊。",
+          "nextNode": "c1_node3",
+          "effects": [
+            {
+              "type": "affection",
+              "valueByMbti": {
+                "INTJ": 2,
+                "ENFJ": 1,
+                "INFJ": 2,
+                "ENTJ": 1
+              }
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": 1,
+                "INTJ": 2,
+                "INFJ": 2,
+                "ENTJ": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c1_node3",
+      "chapter": 1,
+      "scene": "咖啡店",
+      "text": "聊到爱好时，{opponent.name} 眼睛亮了起来，说了一件最近沉迷的事。",
+      "options": [
+        {
+          "text": "全程点头附和，让对方一直说下去。",
+          "nextNode": "c1_node4",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 4
+            },
+            {
+              "type": "alignment",
+              "value": -2
+            }
+          ]
+        },
+        {
+          "text": "认真听，追问细节，也分享自己的同类经历。",
+          "nextNode": "c1_node4",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 2
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": 2,
+                "INTJ": 2,
+                "INFJ": 3,
+                "ENTJ": 2
+              }
+            },
+            {
+              "type": "setFlag",
+              "key": "shared_hobby",
+              "value": true
+            }
+          ]
+        },
+        {
+          "text": "礼貌表示今天时间有点紧，改天再细聊。",
+          "nextNode": "c1_node4",
+          "effects": [
+            {
+              "type": "affection",
+              "value": -2
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": -1,
+                "INTJ": 1,
+                "INFJ": -1,
+                "ENTJ": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c1_node4",
+      "chapter": 1,
+      "scene": "咖啡店",
+      "text": "咖啡见底。{opponent.name} 看表，笑着说今天很开心。",
+      "options": [
+        {
+          "text": "立刻敲定：下次我请客，时间地点现在定。",
+          "nextNode": "c2_node1",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 3
+            },
+            {
+              "type": "alignment",
+              "value": -2
+            }
+          ]
+        },
+        {
+          "text": "说今天聊得很舒服，等彼此有空再约。",
+          "nextNode": "c2_node1",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 2
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": 2,
+                "INTJ": 2,
+                "INFJ": 2,
+                "ENTJ": 2
+              }
+            }
+          ]
+        },
+        {
+          "text": "只回「好的再联系」，语气偏淡。",
+          "nextNode": "c2_node1",
+          "effects": [
+            {
+              "type": "affection",
+              "value": -1
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": -1,
+                "INTJ": 1,
+                "INFJ": 0,
+                "ENTJ": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c2_node1",
+      "chapter": 2,
+      "scene": "公园门口",
+      "text": "周末，你们在公园门口见面。{opponent.name} 一身休闲装，比上次松弛。",
+      "options": [
+        {
+          "text": "一上来就夸「今天状态超好」。",
+          "nextNode": "c2_node2",
+          "effects": [
+            {
+              "type": "affection",
+              "valueByMbti": {
+                "ENFJ": 3,
+                "INTJ": 2,
+                "INFJ": 2,
+                "ENTJ": 2
+              }
+            },
+            {
+              "type": "alignment",
+              "value": -1
+            }
+          ]
+        },
+        {
+          "text": "提议随便走走，边走边聊，不设目的地。",
+          "nextNode": "c2_node2",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 2
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": 2,
+                "INTJ": 3,
+                "INFJ": 2,
+                "ENTJ": 3
+              }
+            }
+          ]
+        },
+        {
+          "text": "问对方有没有想逛的区域。",
+          "nextNode": "c2_node2",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 2
+            },
+            {
+              "type": "alignment",
+              "value": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c2_node2",
+      "chapter": 2,
+      "scene": "公园林荫道",
+      "text": "林荫道上，{opponent.name} 谈起对未来的想象——工作、生活、感情里各自在意什么。",
+      "options": [
+        {
+          "text": "顺着说「你想得很清楚」，把话接在情绪上。",
+          "nextNode": "c2_node3",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 3
+            },
+            {
+              "type": "alignment",
+              "value": -2
+            }
+          ]
+        },
+        {
+          "text": "坦诚自己的想法，也认真问对方「你最怕的是什么」。",
+          "nextNode": "c2_node3",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 2
+            },
+            {
+              "type": "alignment",
+              "value": 2
+            },
+            {
+              "type": "setFlag",
+              "key": "deep_talk_park",
+              "value": true
+            },
+            {
+              "type": "jobEffect",
+              "job": "工程师",
+              "affection": 1,
+              "alignment": 1
+            }
+          ]
+        },
+        {
+          "text": "多听少说，偶尔点头，让对方说完。",
+          "nextNode": "c2_node3",
+          "effects": [
+            {
+              "type": "affection",
+              "valueByMbti": {
+                "INTJ": 2,
+                "INFJ": 3,
+                "ENFJ": 2,
+                "ENTJ": 2
+              }
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": 2,
+                "INTJ": 2,
+                "INFJ": 3,
+                "ENTJ": 1
+              }
+            }
+          ]
+        },
+        {
+          "text": "提起上次聊过的那件小事，问对方后来怎样了。",
+          "nextNode": "c2_secret1",
+          "condition": {
+            "type": "flag",
+            "key": "shared_hobby",
+            "value": true
+          },
+          "effects": [
+            {
+              "type": "affection",
+              "value": 2
+            },
+            {
+              "type": "alignment",
+              "value": 2
+            },
+            {
+              "type": "setFlag",
+              "key": "unlock_collect_echo",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c2_secret1",
+      "chapter": 2,
+      "scene": "公园长椅",
+      "text": "你们在长椅坐了一会儿。{opponent.name} 愣了下：「你还记得啊。」【隐藏·回声】多周目可收集此片段。",
+      "options": [
+        {
+          "text": "继续散步。",
+          "nextNode": "c2_node3",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 2
+            },
+            {
+              "type": "alignment",
+              "value": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c2_node3",
+      "chapter": 2,
+      "scene": "小店橱窗",
+      "text": "路过橱窗，{opponent.name} 多看了两眼，又笑说「看看就好」。",
+      "options": [
+        {
+          "text": "坚持进去看看，喜欢就买下来送 TA。",
+          "nextNode": "c2_node4",
+          "condition": {
+            "type": "affection",
+            "operator": ">=",
+            "value": 54
+          },
+          "effects": [
+            {
+              "type": "affection",
+              "valueByMbti": {
+                "ENFJ": 2,
+                "INTJ": 0,
+                "INFJ": 1,
+                "ENTJ": 1
+              }
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": -1,
+                "INTJ": -2,
+                "INFJ": -1,
+                "ENTJ": -1
+              }
+            }
+          ]
+        },
+        {
+          "text": "说下次再逛，先往前走。",
+          "nextNode": "c2_node4",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 1
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": 1,
+                "INTJ": 2,
+                "INFJ": 2,
+                "ENTJ": 2
+              }
+            }
+          ]
+        },
+        {
+          "text": "一起品评橱窗里的设计，不急着买。",
+          "nextNode": "c2_node4",
+          "effects": [
+            {
+              "type": "affection",
+              "valueByMbti": {
+                "INTJ": 2,
+                "INFJ": 2,
+                "ENFJ": 1,
+                "ENTJ": 2
+              }
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": 2,
+                "INTJ": 2,
+                "INFJ": 2,
+                "ENTJ": 2
+              }
+            },
+            {
+              "type": "jobEffect",
+              "job": "设计师",
+              "affection": 1,
+              "alignment": 1
+            }
+          ]
+        },
+        {
+          "text": "从线条与留白聊到自己的工作审美。",
+          "nextNode": "c2_hidden_design",
+          "condition": [
+            {
+              "type": "playerJob",
+              "value": "设计师"
+            },
+            {
+              "type": "alignment",
+              "operator": ">=",
+              "value": 58
+            }
+          ],
+          "effects": [
+            {
+              "type": "affection",
+              "value": 1
+            },
+            {
+              "type": "alignment",
+              "value": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c2_hidden_design",
+      "chapter": 2,
+      "scene": "小店橱窗前",
+      "text": "你们聊得忘了时间。{opponent.name}：「原来你是这样看世界的。」【隐藏·设计师】",
+      "options": [
+        {
+          "text": "笑着收住话题，继续逛。",
+          "nextNode": "c2_node4",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 2
+            },
+            {
+              "type": "alignment",
+              "value": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c2_node4",
+      "chapter": 2,
+      "scene": "公园长椅",
+      "text": "傍晚，长椅上。{opponent.name} 说今天很放松，希望还有下次。",
+      "options": [
+        {
+          "text": "马上约饭约电影，把日程排满。",
+          "nextNode": "c3_node1",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 3
+            },
+            {
+              "type": "alignment",
+              "value": -2
+            }
+          ]
+        },
+        {
+          "text": "说「和你待着不用装」，语气真诚但不压迫。",
+          "nextNode": "c3_node1",
+          "condition": {
+            "type": "affection",
+            "operator": ">=",
+            "value": 48
+          },
+          "effects": [
+            {
+              "type": "affection",
+              "value": 2
+            },
+            {
+              "type": "alignment",
+              "value": 3
+            }
+          ]
+        },
+        {
+          "text": "道谢道别，保持礼貌距离。",
+          "nextNode": "c3_node1",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 1
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": 1,
+                "INTJ": 2,
+                "INFJ": 2,
+                "ENTJ": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c3_node1",
+      "chapter": 3,
+      "scene": "餐厅",
+      "text": "几次见面后，这次在安静的餐厅。{opponent.name} 主动问：你最近过得怎么样？",
+      "options": [
+        {
+          "text": "把开心和烦心都倒出来，把 TA 当自己人。",
+          "nextNode": "c3_node2",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 3
+            },
+            {
+              "type": "alignment",
+              "value": -2
+            }
+          ]
+        },
+        {
+          "text": "先反问对方，把话筒递回去。",
+          "nextNode": "c3_node2",
+          "effects": [
+            {
+              "type": "affection",
+              "valueByMbti": {
+                "INFJ": 2,
+                "ENFJ": 2,
+                "INTJ": 2,
+                "ENTJ": 1
+              }
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": 2,
+                "INTJ": 1,
+                "INFJ": 3,
+                "ENTJ": 1
+              }
+            }
+          ]
+        },
+        {
+          "text": "一句「还行」带过，保留边界。",
+          "nextNode": "c3_node2",
+          "effects": [
+            {
+              "type": "affection",
+              "value": -1
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": -1,
+                "INTJ": 2,
+                "INFJ": 0,
+                "ENTJ": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c3_node2",
+      "chapter": 3,
+      "scene": "餐厅",
+      "text": "聊到「理想关系」，{opponent.name} 说得很认真。你们有一致处，也有棱角。",
+      "options": [
+        {
+          "text": "「不同很正常，互相理解就好。」——先把场面圆过去。",
+          "nextNode": "c3_node3",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 3
+            },
+            {
+              "type": "alignment",
+              "value": -2
+            }
+          ]
+        },
+        {
+          "text": "温和但清楚地说：我在这方面没法妥协的是……",
+          "nextNode": "c3_node3",
+          "effects": [
+            {
+              "type": "affection",
+              "valueByMbti": {
+                "INTJ": 2,
+                "ENTJ": 2,
+                "ENFJ": 0,
+                "INFJ": 1
+              }
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": 1,
+                "INTJ": 3,
+                "INFJ": 2,
+                "ENTJ": 3
+              }
+            },
+            {
+              "type": "jobEffect",
+              "job": "律师",
+              "affection": 1,
+              "alignment": 1
+            }
+          ]
+        },
+        {
+          "text": "岔开话题，避免吵起来。",
+          "nextNode": "c3_node3",
+          "effects": [
+            {
+              "type": "affection",
+              "value": -2
+            },
+            {
+              "type": "alignment",
+              "value": -1
+            }
+          ]
+        },
+        {
+          "text": "从职业经历里聊对人性的理解。",
+          "nextNode": "c3_hidden_doctor",
+          "condition": [
+            {
+              "type": "playerJob",
+              "value": "医生"
+            },
+            {
+              "type": "alignment",
+              "operator": ">=",
+              "value": 55
+            }
+          ],
+          "effects": [
+            {
+              "type": "affection",
+              "value": 1
+            },
+            {
+              "type": "alignment",
+              "value": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c3_hidden_doctor",
+      "chapter": 3,
+      "scene": "餐厅",
+      "text": "你举了工作中的例子。{opponent.name}：「你比我想的更认真。」【隐藏·医生】",
+      "options": [
+        {
+          "text": "继续晚餐。",
+          "nextNode": "c3_node3",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 2
+            },
+            {
+              "type": "alignment",
+              "value": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c3_node3",
+      "chapter": 3,
+      "scene": "餐厅门口",
+      "text": "夜色里送到门口。{opponent.name} 欲言又止，像在等一句话。",
+      "options": [
+        {
+          "text": "主动约正式的一餐，只两个人。",
+          "nextNode": "c4_node1",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 2
+            },
+            {
+              "type": "alignment",
+              "value": 2
+            },
+            {
+              "type": "setFlag",
+              "key": "formal_date_planned",
+              "value": true
+            }
+          ]
+        },
+        {
+          "text": "说「今天谢谢，路上小心」，把节奏交给对方。",
+          "nextNode": "c4_node1",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 1
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": 1,
+                "INTJ": 2,
+                "INFJ": 2,
+                "ENTJ": 1
+              }
+            }
+          ]
+        },
+        {
+          "text": "直接问：愿意和我认真试试吗？",
+          "nextNode": "c4_node1",
+          "condition": {
+            "type": "affection",
+            "operator": ">=",
+            "value": 58
+          },
+          "effects": [
+            {
+              "type": "affection",
+              "value": 2
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": 1,
+                "INTJ": 2,
+                "INFJ": 1,
+                "ENTJ": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c4_node1",
+      "chapter": 4,
+      "scene": "约会地点",
+      "text": "又一次见面。{opponent.name} 明显放松，像已经把你放进「重要的人」那一栏。",
+      "options": [
+        {
+          "text": "开场就郑重表白，把气氛推到顶点。",
+          "nextNode": "c4_node2",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 3
+            },
+            {
+              "type": "alignment",
+              "value": -2
+            }
+          ]
+        },
+        {
+          "text": "准备了小礼物，先创造惊喜再问心意。",
+          "nextNode": "c4_node2",
+          "effects": [
+            {
+              "type": "affection",
+              "valueByMbti": {
+                "ENFJ": 2,
+                "INFJ": 2,
+                "INTJ": 2,
+                "ENTJ": 2
+              }
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": 2,
+                "INTJ": 2,
+                "INFJ": 2,
+                "ENTJ": 2
+              }
+            }
+          ]
+        },
+        {
+          "text": "先说这段时间自己的变化，再听对方。",
+          "nextNode": "c4_hidden_align",
+          "condition": {
+            "type": "alignment",
+            "operator": ">=",
+            "value": 62
+          },
+          "effects": [
+            {
+              "type": "affection",
+              "value": 1
+            },
+            {
+              "type": "alignment",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "text": "只说「能认识你真好」，再观察。",
+          "nextNode": "c4_node2",
+          "effects": [
+            {
+              "type": "affection",
+              "value": -1
+            },
+            {
+              "type": "alignment",
+              "valueByPlayerMbti": {
+                "ENFJ": 0,
+                "INTJ": 1,
+                "INFJ": 1,
+                "ENTJ": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c4_hidden_align",
+      "chapter": 4,
+      "scene": "约会地点",
+      "text": "你先讲了遇见 TA 之后自己的变化。{opponent.name}：「我也是。」【隐藏·高贴合】",
+      "options": [
+        {
+          "text": "再郑重说出心意。",
+          "nextNode": "c4_node2",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 2
+            },
+            {
+              "type": "alignment",
+              "value": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c4_node2",
+      "chapter": 4,
+      "scene": "约会地点",
+      "text": "{opponent.name} 沉默几秒，笑了：其实也在等合适的时机。",
+      "options": [
+        {
+          "text": "牵起手说「那从今天开始」。",
+          "nextNode": "c4_node3",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 2
+            },
+            {
+              "type": "alignment",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "text": "笑着说「还好都没怂」。",
+          "nextNode": "c4_node3",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 2
+            },
+            {
+              "type": "alignment",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "text": "紧张到只说「谢谢你的答案」。",
+          "nextNode": "c4_node3",
+          "effects": [
+            {
+              "type": "affection",
+              "value": 1
+            },
+            {
+              "type": "alignment",
+              "value": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c4_node3",
+      "chapter": 4,
+      "scene": "归途",
+      "text": "你们并肩走了一段。剩下的交给时间——但此刻的选择，已经写进了心里。",
+      "options": [
+        {
+          "text": "一起走下去吧。",
+          "nextNode": "",
+          "effects": []
+        },
+        {
+          "text": "今天谢谢你。",
+          "nextNode": "",
+          "effects": []
+        },
+        {
+          "text": "下次见。",
+          "nextNode": "",
+          "effects": []
+        }
+      ]
+    }
+  ]
+}
