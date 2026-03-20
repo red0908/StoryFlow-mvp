@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { audioManager } from '../../audio';
 import './HomePage.less';
 
-const INTRO_CONTENT = `欢迎来到「MBTI心动相亲局」！
+const INTRO_CONTENT = `欢迎来到「MBTI心动互动局」！
 
-这是一款轻量级、情景式的相亲互动游戏，结合 MBTI 人格理论，让玩家在模拟相亲中体验性格匹配的乐趣。故事发生在一间安静的咖啡店里——你将与相亲对象在咖啡香中相遇，通过对话与选择推进剧情，探索心动的可能。
+这是一款轻量级、情景式的人格匹配互动游戏，结合 MBTI 人格理论，让玩家在互动选择中体验性格匹配的乐趣。故事发生在一间安静的咖啡店里——你将与互动对象在咖啡香中相遇，通过对话与选择推进剧情，探索心动的可能。
 
 【四种人格】
 本作登场四种人格类型，每种性格会对你做出的选择产生不同反应，影响好感与剧情走向：
@@ -16,7 +16,7 @@ const INTRO_CONTENT = `欢迎来到「MBTI心动相亲局」！
 
 【玩法介绍】
 1. 创建角色：选择性别、年龄、职业与你的 MBTI、一句话介绍。
-2. 选择对象：系统随机生成 5 位异性候选人，展示其 MBTI 与介绍，点击一位即锁定为本次相亲对象。
+2. 选择对象：系统随机生成 5 位异性候选人，展示其 MBTI 与介绍，点击一位即锁定为本次互动对象。
 3. 四章剧情：从「开头」到「发展」「高潮」「结束」，每章包含多个剧情节点，每个节点有 2～3 个选项，你的选择会增减对方好感度或触发不同分支。
 4. 达成结局：根据累积好感度与关键选择，将走向「完美匹配」「略有遗憾」「分道扬镳」等不同结局。
 
@@ -96,7 +96,7 @@ function HomePage() {
         <h1 className="home-title">
           <img
             src="/base_img/main_title.png"
-            alt="MBTI心动相亲局 MBTI Heartbeat Dating"
+            alt="MBTI心动互动局 MBTI Heartbeat Interactive"
             className="home-title-img"
           />
         </h1>
