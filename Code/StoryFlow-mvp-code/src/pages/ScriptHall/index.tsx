@@ -4,6 +4,7 @@ import type { MBTI } from '../../types';
 import { useScriptStore, type ScriptSummary } from '../../stores/useScriptStore';
 import { useProfileStore } from '../../stores/useProfileStore';
 import { audioManager } from '../../audio';
+import { fetchJsonWithTimeout } from '../../utils/fetchJson';
 import './ScriptHall.less';
 
 /** 从 index.json 拉取的剧本项，解锁状态由 profile.unlockedScripts 控制 */
@@ -27,9 +28,8 @@ function ScriptHall() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/data/scripts/index.json')
-      .then((res) => res.json())
-      .then((data: ScriptItemFromApi[]) => {
+    fetchJsonWithTimeout<ScriptItemFromApi[]>('/data/scripts/index.json')
+      .then((data) => {
         setScripts(Array.isArray(data) ? data : []);
       })
       .catch(() => setScripts([]))

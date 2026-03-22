@@ -8,6 +8,7 @@ import {
   getJobLabel,
   type GameConfigFull,
 } from '../../utils/generateCandidates';
+import { fetchJsonWithTimeout } from '../../utils/fetchJson';
 import './BlindDate.less';
 
 const AUTO_SCROLL_INTERVAL_MS = 4000;
@@ -74,9 +75,8 @@ function BlindDatePage() {
       navigate('/create/myRole', { replace: true });
       return;
     }
-    fetch('/data/gameConfig.json')
-      .then((res) => res.json())
-      .then((data: GameConfigFull) => {
+    fetchJsonWithTimeout<GameConfigFull>('/data/gameConfig.json')
+      .then((data) => {
         setConfig(data);
         setCandidates(generateCandidates(data, player.gender));
       })

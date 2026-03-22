@@ -14,6 +14,7 @@ import { useGameStore } from '../../stores/useGameStore';
 import { usePlayerStore } from '../../stores/usePlayerStore';
 import { useScriptStore } from '../../stores/useScriptStore';
 import { audioManager } from '../../audio';
+import { fetchJsonWithTimeout } from '../../utils/fetchJson';
 import './GamePage.less';
 
 const CHAPTER_TITLES: Record<number, string> = {
@@ -282,12 +283,9 @@ function GamePage() {
     setLoading(true);
     setNodes([]);
     let cancelled = false;
-    fetch(scriptPath)
-      .then((res) => {
-        if (!res.ok) throw new Error(`剧本加载失败 ${res.status}`);
-        return res.json();
-      })
-      .then((data: Script | StoryNode[]) => {
+    // 剧本 JSON 较大，旧设备微信里可能较慢，超时放宽到 60s
+    fetchJsonWithTimeout<Script | StoryNode[]>(scriptPath, 60000)
+      .then((data) => {
         if (cancelled) return;
         if (Array.isArray(data)) {
           setNodes(data);
